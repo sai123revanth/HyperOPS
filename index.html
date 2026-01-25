@@ -12,6 +12,7 @@
     <script src="https://unpkg.com/lucide@latest"></script>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@200;300;400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
+        /* Restoring the exact theme from your provided code */
         :root {
             --bg: #000000;
             --accent-1: #3b82f6; 
@@ -19,14 +20,13 @@
             --accent-3: #ec4899; 
             --glass: rgba(255, 255, 255, 0.03);
             --border: rgba(255, 255, 255, 0.1);
-            --matrix-green: #00ff41;
         }
 
         body {
             font-family: 'Plus Jakarta Sans', sans-serif;
             background-color: var(--bg);
             color: #ffffff;
-            overflow: hidden; /* Prevent scrolling for this single-screen view */
+            overflow: hidden; /* Prevent scrolling for splash screen feel */
             letter-spacing: -0.01em;
             margin: 0;
             width: 100%;
@@ -64,29 +64,32 @@
             max-width: 800px;
             max-height: 800px;
             border-radius: 50%;
-            filter: blur(80px);
-            opacity: 0.2; 
+            filter: blur(60px);
+            opacity: 0.25; 
             pointer-events: none;
             will-change: transform;
             animation: aura-move 20s infinite alternate ease-in-out;
         }
-        /* Adjusted colors for Matrix Theme */
+        
+        /* Restoring original aura colors */
         .aura-1 { background: var(--accent-1); top: -10%; left: -15%; }
-        .aura-2 { background: var(--matrix-green); bottom: -10%; right: -10%; animation-delay: -7s; opacity: 0.15; }
+        .aura-2 { background: var(--accent-3); bottom: -10%; right: -10%; animation-delay: -7s; }
 
         @keyframes aura-move {
             0% { transform: translate(0, 0) scale(1); }
             100% { transform: translate(30px, 30px) scale(1.05); }
         }
 
-        .gradient-brand {
-            background: linear-gradient(to right, #ffffff, #818cf8, #34d399);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid var(--border);
         }
 
         .border-beam {
             position: relative;
+            z-index: 1;
         }
         
         .border-beam::before {
@@ -95,7 +98,7 @@
             inset: -1px;
             border-radius: inherit;
             padding: 1px;
-            background: conic-gradient(from 0deg, transparent 50%, var(--accent-1), var(--matrix-green), var(--accent-1), transparent);
+            background: conic-gradient(from 0deg, transparent 50%, var(--accent-1), var(--accent-2), var(--accent-3), transparent);
             -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
             mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
             -webkit-mask-composite: destination-out;
@@ -109,17 +112,21 @@
             to { transform: rotate(360deg); }
         }
 
-        .glass-panel {
-            background: rgba(255, 255, 255, 0.03);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
-            border: 1px solid var(--border);
+        .text-glow {
+            text-shadow: 0 0 20px rgba(255, 255, 255, 0.15);
+        }
+        
+        /* Exact gradient from source */
+        .gradient-brand {
+            background: linear-gradient(to right, #ffffff, #818cf8, #c084fc);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
         }
 
         .reveal {
             opacity: 0;
             transform: translateY(20px);
-            transition: all 1s cubic-bezier(0.2, 0.8, 0.2, 1);
+            transition: all 0.8s cubic-bezier(0.2, 0.8, 0.2, 1);
         }
         .reveal.active {
             opacity: 1;
@@ -137,6 +144,7 @@
     <!-- Main Content centered by body flex -->
     <main class="relative z-10 w-full max-w-7xl mx-auto px-6 text-center">
         <div class="reveal active">
+            
             <h1 class="text-5xl md:text-8xl lg:text-9xl font-black tracking-tighter leading-none mb-6">
                 AI HACK <br>
                 <span class="gradient-brand">MATRIX</span>
@@ -148,7 +156,7 @@
                 Team <span class="text-white">HyperOPS</span>
             </h2>
             
-            <!-- Optional subtle animated element below -->
+            <!-- Optional subtle animated element below using the Blue/Purple theme -->
             <div class="mt-16 mx-auto w-12 h-12 border-beam rounded-xl glass-panel flex items-center justify-center opacity-50">
                 <i data-lucide="cpu" class="w-6 h-6 text-slate-400"></i>
             </div>
