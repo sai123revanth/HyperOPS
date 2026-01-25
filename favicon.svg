@@ -1,33 +1,60 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512">
   <defs>
+    <!-- Brand Gradient (Diagonal) -->
     <linearGradient id="hyperGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#3b82f6" />
-      <stop offset="50%" stop-color="#8b5cf6" />
-      <stop offset="100%" stop-color="#ec4899" />
+      <stop offset="0%" stop-color="#3b82f6" /> <!-- Blue -->
+      <stop offset="50%" stop-color="#8b5cf6" /> <!-- Purple -->
+      <stop offset="100%" stop-color="#ec4899" /> <!-- Pink -->
     </linearGradient>
-    <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
-      <feGaussianBlur stdDeviation="15" result="blur" />
-      <feComposite in="SourceGraphic" in2="blur" operator="over" />
+    
+    <!-- Hex Mesh Pattern -->
+    <pattern id="hexMesh" x="0" y="0" width="20" height="20" patternUnits="userSpaceOnUse">
+       <path d="M10,0 L20,5 L20,15 L10,20 L0,15 L0,5 Z" fill="none" stroke="#ffffff" stroke-width="1" opacity="0.15" />
+    </pattern>
+
+    <!-- Aura Glow Filter -->
+    <filter id="auraBlur" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="40" result="blur" />
+    </filter>
+    
+    <!-- Shape Shadow -->
+    <filter id="dropShadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="4" dy="4" stdDeviation="4" flood-color="#000" flood-opacity="0.5"/>
     </filter>
   </defs>
   
-  <!-- Dark Background Container -->
-  <rect x="0" y="0" width="512" height="512" rx="128" fill="#0a0a0a" />
+  <!-- 1. Base Container (Dark Void) -->
+  <rect x="0" y="0" width="512" height="512" rx="100" fill="#0a0a0a" />
   
-  <!-- Outer Glow Ring -->
-  <circle cx="256" cy="256" r="180" fill="none" stroke="url(#hyperGradient)" stroke-width="8" opacity="0.3" />
+  <!-- 2. Background Auras (Matching Website Theme) -->
+  <circle cx="100" cy="100" r="120" fill="#3b82f6" opacity="0.2" filter="url(#auraBlur)" />
+  <circle cx="412" cy="412" r="120" fill="#ec4899" opacity="0.2" filter="url(#auraBlur)" />
 
-  <!-- The "H" / Hyper Symbol -->
-  <g filter="url(#glow)">
-    <!-- Left Pillar -->
-    <path d="M146 128 L146 384" fill="none" stroke="url(#hyperGradient)" stroke-width="64" stroke-linecap="round" />
-    <!-- Right Pillar -->
-    <path d="M366 128 L366 384" fill="none" stroke="url(#hyperGradient)" stroke-width="64" stroke-linecap="round" />
-    <!-- Connecting Pulse -->
-    <path d="M146 256 L366 256" fill="none" stroke="url(#hyperGradient)" stroke-width="50" stroke-linecap="round" />
+  <!-- 3. The Aero-H Construction -->
+  <g filter="url(#dropShadow)">
+    <!-- Left Pillar (Leaning Right) -->
+    <path d="M 140 80 L 220 80 L 190 432 L 110 432 Z" fill="url(#hyperGradient)" />
+    
+    <!-- Right Pillar (Leaning Right) -->
+    <path d="M 340 80 L 420 80 L 390 432 L 310 432 Z" fill="url(#hyperGradient)" />
+    
+    <!-- Floating Crossbar (Aerodynamic Wing shape) -->
+    <path d="M 190 230 L 335 230 L 325 282 L 180 282 Z" fill="url(#hyperGradient)" />
   </g>
   
-  <!-- Central Tech Node -->
-  <circle cx="256" cy="256" r="32" fill="#ffffff" />
+  <!-- 4. Matrix Texture Overlay (Masked to the H shape logic) -->
+  <!-- We simply replicate the paths with the pattern fill -->
+  <g pointer-events="none">
+    <path d="M 140 80 L 220 80 L 190 432 L 110 432 Z" fill="url(#hexMesh)" />
+    <path d="M 340 80 L 420 80 L 390 432 L 310 432 Z" fill="url(#hexMesh)" />
+    <path d="M 190 230 L 335 230 L 325 282 L 180 282 Z" fill="url(#hexMesh)" />
+  </g>
+  
+  <!-- 5. High-Tech Highlights (White Accents) -->
+  <circle cx="205" cy="80" r="4" fill="#ffffff" opacity="0.8" />
+  <circle cx="125" cy="432" r="4" fill="#ffffff" opacity="0.8" />
+  <circle cx="405" cy="80" r="4" fill="#ffffff" opacity="0.8" />
+  <circle cx="325" cy="432" r="4" fill="#ffffff" opacity="0.8" />
+  
 </svg>
