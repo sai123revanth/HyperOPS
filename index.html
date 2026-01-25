@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>AI Hack Matrix | Team HyperOPS</title>
+    <meta name="description" content="AI Hack Matrix - Team HyperOPS">
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@200;300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #000000;
+            --accent-1: #3b82f6; 
+            --accent-2: #8b5cf6; 
+            --accent-3: #ec4899; 
+            --glass: rgba(255, 255, 255, 0.03);
+            --border: rgba(255, 255, 255, 0.1);
+            --matrix-green: #00ff41;
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: var(--bg);
+            color: #ffffff;
+            overflow: hidden; /* Prevent scrolling for this single-screen view */
+            letter-spacing: -0.01em;
+            margin: 0;
+            width: 100%;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Fixed Background System */
+        .bg-fixed-container {
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+            overflow: hidden;
+            pointer-events: none;
+            background: var(--bg);
+        }
+
+        .grid-bg {
+            position: absolute;
+            inset: 0;
+            background-image: 
+                linear-gradient(to right, rgba(255,255,255,0.08) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(255,255,255,0.08) 1px, transparent 1px);
+            background-size: 40px 40px;
+            mask-image: radial-gradient(ellipse at center, black, transparent 80%);
+            -webkit-mask-image: radial-gradient(ellipse at center, black, transparent 80%);
+        }
+
+        .aura {
+            position: absolute;
+            width: 90vw;
+            height: 90vw;
+            max-width: 800px;
+            max-height: 800px;
+            border-radius: 50%;
+            filter: blur(80px);
+            opacity: 0.2; 
+            pointer-events: none;
+            will-change: transform;
+            animation: aura-move 20s infinite alternate ease-in-out;
+        }
+        /* Adjusted colors for Matrix Theme */
+        .aura-1 { background: var(--accent-1); top: -10%; left: -15%; }
+        .aura-2 { background: var(--matrix-green); bottom: -10%; right: -10%; animation-delay: -7s; opacity: 0.15; }
+
+        @keyframes aura-move {
+            0% { transform: translate(0, 0) scale(1); }
+            100% { transform: translate(30px, 30px) scale(1.05); }
+        }
+
+        .gradient-brand {
+            background: linear-gradient(to right, #ffffff, #818cf8, #34d399);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .border-beam {
+            position: relative;
+        }
+        
+        .border-beam::before {
+            content: "";
+            position: absolute;
+            inset: -1px;
+            border-radius: inherit;
+            padding: 1px;
+            background: conic-gradient(from 0deg, transparent 50%, var(--accent-1), var(--matrix-green), var(--accent-1), transparent);
+            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            -webkit-mask-composite: destination-out;
+            mask-composite: exclude;
+            animation: spin-beam 5s linear infinite;
+            pointer-events: none;
+        }
+
+        @keyframes spin-beam {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid var(--border);
+        }
+
+        .reveal {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 1s cubic-bezier(0.2, 0.8, 0.2, 1);
+        }
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-fixed-container">
+        <div class="grid-bg"></div>
+        <div class="aura aura-1"></div>
+        <div class="aura aura-2"></div>
+    </div>
+
+    <!-- Main Content centered by body flex -->
+    <main class="relative z-10 w-full max-w-7xl mx-auto px-6 text-center">
+        <div class="reveal active">
+            <h1 class="text-5xl md:text-8xl lg:text-9xl font-black tracking-tighter leading-none mb-6">
+                AI HACK <br>
+                <span class="gradient-brand">MATRIX</span>
+            </h1>
+
+            <div class="h-px w-24 bg-gradient-to-r from-transparent via-white/20 to-transparent mx-auto my-8"></div>
+
+            <h2 class="text-xl md:text-3xl lg:text-4xl font-bold tracking-[0.2em] md:tracking-[0.3em] uppercase text-slate-400">
+                Team <span class="text-white">HyperOPS</span>
+            </h2>
+            
+            <!-- Optional subtle animated element below -->
+            <div class="mt-16 mx-auto w-12 h-12 border-beam rounded-xl glass-panel flex items-center justify-center opacity-50">
+                <i data-lucide="cpu" class="w-6 h-6 text-slate-400"></i>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        lucide.createIcons();
+
+        // Parallax Auras
+        const auras = document.querySelectorAll('.aura');
+        window.addEventListener('mousemove', (e) => {
+            const x = (e.clientX / window.innerWidth - 0.5) * 30;
+            const y = (e.clientY / window.innerHeight - 0.5) * 30;
+            
+            auras.forEach((aura, index) => {
+                const speed = (index + 1) * 0.3;
+                aura.style.transform = `translate(${x * speed}px, ${y * speed}px)`;
+            });
+        });
+
+        // Trigger reveal animation on load
+        document.addEventListener('DOMContentLoaded', () => {
+            const reveals = document.querySelectorAll('.reveal');
+            reveals.forEach(el => el.classList.add('active'));
+        });
+    </script>
+</body>
+</html>
