@@ -12,7 +12,7 @@ st.set_page_config(
     page_title="Ecopay | Carbon Attribution Engine",
     page_icon="🌿",
     layout="wide",
-    initial_sidebar_state="expanded"
+    initial_sidebar_state="collapsed"
 )
 
 # Custom CSS for a modern, "Eco-FinTech" aesthetic
@@ -172,15 +172,22 @@ class CarbonScoringEngine:
 # -----------------------------------------------------------------------------
 
 def main():
-    # --- Sidebar Controls ---
-    with st.sidebar:
-        st.title("Ecopay Controls")
-        st.info("💡 **Engine Status:** Active\n\nModel: `v2.1-Standard-Emission-Factors`")
-        
-        data_df = load_data()
-        if data_df.empty:
-            return
+    # Load Data First
+    data_df = load_data()
+    if data_df.empty:
+        return
 
+    # --- Header & Top Navigation Controls ---
+    st.title("Ecopay Carbon Engine")
+    st.markdown("### Carbon Attribution & Scoring Dashboard")
+    st.markdown("Mapping categorized financial transactions to standardized emission factors to produce actionable climate intelligence.")
+    
+    st.markdown("---")
+    
+    # Create a "Top Nav" feel using columns
+    nav_col1, nav_col2 = st.columns([3, 1])
+    
+    with nav_col1:
         # Date Filter
         min_date = data_df['Date'].min()
         max_date = data_df['Date'].max()
@@ -191,6 +198,11 @@ def main():
             min_value=min_date,
             max_value=max_date
         )
+        
+    with nav_col2:
+        st.info("💡 **Engine Status:** Active\n\nModel: `v2.1-Standard`")
+
+    st.divider()
 
     # --- Processing Data with Engine ---
     if len(date_range) == 2:
@@ -216,13 +228,6 @@ def main():
     filtered_df['Eco_Score'] = filtered_df.apply(
         lambda x: engine.calculate_eco_score(x['Carbon_Footprint_kg'], x['Amount']), axis=1
     )
-
-    # --- MAIN DASHBOARD ---
-    
-    st.title("Ecopay Carbon Engine")
-    st.markdown("### Carbon Attribution & Scoring Dashboard")
-    st.markdown("Mapping categorized financial transactions to standardized emission factors to produce actionable climate intelligence.")
-    st.divider()
 
     # 1. TOP LEVEL METRICS
     col1, col2, col3, col4 = st.columns(4)
