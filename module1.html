@@ -186,6 +186,27 @@
             font-size: 0.8rem;
             line-height: 1.5;
         }
+
+        /* Resizer Styles */
+        .resizer {
+            width: 8px;
+            cursor: col-resize;
+            transition: background-color 0.2s;
+            flex-shrink: 0;
+            margin: 0 2px;
+            border-radius: 4px;
+            display: none; /* Hidden on mobile */
+        }
+        
+        @media (min-width: 1024px) {
+            .resizer {
+                display: block;
+            }
+        }
+
+        .resizer:hover, .resizer.resizing {
+            background-color: rgba(16, 185, 129, 0.5); /* Emerald 500 */
+        }
     </style>
 </head>
 <body>
@@ -206,11 +227,12 @@
             </a>
         </div>
 
-        <!-- Two Panel Layout -->
-        <main class="w-full max-w-[98rem] mx-auto grid grid-cols-1 lg:grid-cols-4 gap-4 flex-grow min-h-0 reveal active">
+        <!-- Two Panel Layout (Flex for Resizing) -->
+        <!-- Note: gap-4 is used on mobile, gap-0 on desktop to allow resizer to handle spacing -->
+        <main id="main-layout" class="w-full max-w-[98rem] mx-auto flex flex-col lg:flex-row gap-4 lg:gap-0 flex-grow min-h-0 reveal active">
             
             <!-- LEFT PANEL: Module Info -->
-            <aside class="lg:col-span-1 flex flex-col gap-4 h-full overflow-hidden">
+            <aside id="left-panel" class="lg:w-[25%] flex flex-col gap-4 h-full overflow-hidden shrink-0">
                 
                 <!-- BRANDING HEADER -->
                 <div class="glass-panel rounded-2xl p-5 flex items-center gap-4 shrink-0 shadow-lg shadow-emerald-900/20">
@@ -281,8 +303,20 @@
 
             </aside>
 
+            <!-- RESIZER HANDLE -->
+            <div id="resizer" class="resizer" title="Drag to resize"></div>
+
             <!-- RIGHT PANEL: Streamlit Embed -->
-            <section class="lg:col-span-3 h-full overflow-hidden">
+            <section id="right-panel" class="flex-1 min-w-0 h-full overflow-hidden relative">
+                
+                <!-- Status (No Slider) -->
+                <div class="absolute top-4 right-4 z-20">
+                    <div class="glass-panel px-3 py-1.5 rounded-full flex items-center gap-2 shadow-lg backdrop-blur-xl">
+                        <div class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse shadow-[0_0_8px_#10b981]"></div>
+                        <span class="text-[9px] uppercase font-bold text-emerald-500 tracking-wider">Active</span>
+                    </div>
+                </div>
+
                 <div class="glass-panel rounded-3xl p-1 md:p-2 relative shadow-2xl shadow-emerald-900/20 h-full">
                     
                     <div class="streamlit-container bg-black/40 rounded-2xl relative h-full">
@@ -304,12 +338,6 @@
                             allow="camera; microphone; geolocation"
                         ></iframe>
                         
-                    </div>
-
-                    <!-- Decorative UI Elements -->
-                    <div class="absolute top-6 right-6 flex gap-2 pointer-events-none z-10">
-                        <div class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse shadow-[0_0_10px_#10b981]"></div>
-                        <span class="text-[10px] uppercase font-bold text-emerald-500 tracking-wider">Engine Active</span>
                     </div>
                 </div>
             </section>
@@ -365,6 +393,53 @@
                 }, 500);
             }, 1500);
         };
+
+        // --- RESIZER LOGIC ---
+        const resizer = document.getElementById('resizer');
+        const leftPanel = document.getElementById('left-panel');
+        const container = document.getElementById('main-layout');
+        let isResizing = false;
+
+        const onMouseDown = (e) => {
+            isResizing = true;
+            document.body.style.cursor = 'col-resize';
+            resizer.classList.add('resizing');
+            
+            document.addEventListener('mousemove', onMouseMove);
+            document.addEventListener('mouseup', onMouseUp);
+        };
+
+        const onMouseMove = (e) => {
+            if (!isResizing) return;
+            
+            // Calculate percentage width for left panel
+            const containerWidth = container.getBoundingClientRect().width;
+            const newLeftWidth = (e.clientX / containerWidth) * 100;
+            
+            // Set limits (min 20%, max 60%)
+            if (newLeftWidth > 20 && newLeftWidth < 60) {
+                leftPanel.style.width = `${newLeftWidth}%`;
+            }
+        };
+
+        const onMouseUp = () => {
+            isResizing = false;
+            document.body.style.removeProperty('cursor');
+            resizer.classList.remove('resizing');
+            
+            document.removeEventListener('mousemove', onMouseMove);
+            document.removeEventListener('mouseup', onMouseUp);
+        };
+
+        resizer.addEventListener('mousedown', onMouseDown);
+
+        // Reset on window resize if moving to mobile
+        window.addEventListener('resize', () => {
+            if (window.innerWidth < 1024) {
+                leftPanel.style.width = '';
+            }
+        });
+
     </script>
 </body>
 </html>
