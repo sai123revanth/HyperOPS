@@ -47,7 +47,7 @@ st.markdown("""
 
     /* Metric Values */
     div[data-testid="stMetricValue"] {
-        font-size: 2.2rem;
+        font-size: 1.8rem;
         color: #ffffff; 
         font-weight: 700;
         text-shadow: 0 2px 4px rgba(0,0,0,0.5);
