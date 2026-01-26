@@ -6,15 +6,8 @@
     <title>GREENIQ | Team HyperOPS</title>
     <meta name="description" content="GREENIQ - Automated Carbon Footprint Tracking via Transaction Analytics">
 
-    <!-- 2. PWA & Theme Color -->
+    <!-- Theme Color -->
     <meta name="theme-color" content="#000000">
-    <link rel="manifest" href="/manifest.json">
-    
-    <!-- 3. Open Graph -->
-    <meta property="og:type" content="website">
-    <meta property="og:title" content="GREENIQ by HyperOPS">
-    <meta property="og:description" content="Automated Carbon Footprint Tracking via Transaction Analytics.">
-    <meta property="og:url" content="https://hyperops.vercel.app">
     
     <!-- Favicon -->
     <link rel="icon" type="image/svg+xml" href="favicon.svg">
@@ -38,7 +31,7 @@
             background-color: var(--bg);
             color: #ffffff;
             overflow-x: hidden;
-            overflow-y: auto; /* Enabled scrolling for content */
+            overflow-y: auto;
             letter-spacing: -0.01em;
             margin: 0;
             width: 100%;
@@ -126,7 +119,6 @@
             to { transform: rotate(360deg); }
         }
 
-        /* Exact gradient from source */
         .gradient-brand {
             background: linear-gradient(to right, #ffffff, #818cf8, #c084fc);
             -webkit-background-clip: text;
@@ -143,7 +135,6 @@
             transform: translateY(0);
         }
 
-        /* Tech Tag Styling */
         .tech-tag {
             font-size: 0.7rem;
             letter-spacing: 0.1em;
@@ -153,6 +144,39 @@
             background: rgba(255,255,255,0.05);
             border: 1px solid rgba(255,255,255,0.1);
             color: #94a3b8;
+        }
+
+        /* Form Styling */
+        .luma-input {
+            width: 100%;
+            background: rgba(0,0,0,0.3);
+            border: 1px solid rgba(255,255,255,0.1);
+            color: white;
+            padding: 0.75rem 1rem;
+            border-radius: 0.75rem;
+            outline: none;
+            transition: all 0.3s;
+        }
+        .luma-input:focus {
+            border-color: var(--accent-1);
+            background: rgba(59, 130, 246, 0.05);
+        }
+        .luma-btn {
+            background: linear-gradient(to right, var(--accent-1), var(--accent-2));
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.75rem;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            font-size: 0.75rem;
+            width: 100%;
+            transition: all 0.3s;
+        }
+        .luma-btn:hover {
+            opacity: 0.9;
+            transform: scale(1.02);
+            box-shadow: 0 0 20px rgba(59, 130, 246, 0.4);
         }
     </style>
 </head>
@@ -166,227 +190,110 @@
     <!-- Main Content Wrapper -->
     <div class="relative z-10 w-full min-h-screen flex flex-col items-center justify-start pt-20 pb-20 px-6">
         
-        <!-- Header / Hero -->
+        <!-- Header -->
         <main class="w-full max-w-5xl mx-auto text-center mb-20 reveal active">
-            
             <div class="inline-flex items-center gap-2 mb-6 opacity-70">
                 <i data-lucide="leaf" class="w-4 h-4 text-white"></i>
                 <span class="text-[10px] uppercase tracking-[0.3em] font-bold">Category: Software</span>
             </div>
-
             <h1 class="text-6xl md:text-8xl lg:text-9xl font-black tracking-tighter leading-none mb-4">
                 <span class="gradient-brand">GREENIQ</span>
             </h1>
-            
             <p class="text-lg md:text-2xl text-slate-400 font-light tracking-wide max-w-3xl mx-auto mb-8">
                 Automated Carbon Footprint Tracking via Transaction Analytics
             </p>
-
-            <!-- Tech Bucket -->
             <div class="flex flex-wrap justify-center gap-3 mb-12">
                 <span class="tech-tag">Data Analytics</span>
                 <span class="tech-tag">API Integration</span>
                 <span class="tech-tag">ESG</span>
             </div>
-
             <div class="h-px w-24 bg-gradient-to-r from-transparent via-white/20 to-transparent mx-auto"></div>
         </main>
 
-        <!-- Detailed Sections -->
-        <div class="w-full max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-6 reveal">
-            
-            <!-- Context & Objective -->
-            <div class="glass-panel p-8 md:p-10 rounded-3xl border-beam flex flex-col gap-6">
-                <div>
-                    <div class="flex items-center gap-3 mb-4">
-                        <div class="p-2 rounded-lg bg-blue-500/10">
-                            <i data-lucide="info" class="w-5 h-5 text-blue-400"></i>
-                        </div>
-                        <h3 class="text-xl font-bold">Context & Motivation</h3>
-                    </div>
-                    <p class="text-slate-400 text-sm leading-relaxed">
-                        Consumers increasingly seek to make environmentally responsible choices but lack visibility into the carbon impact of their everyday financial transactions. The gap between intent and action is often a lack of data.
-                    </p>
-                </div>
-                
-                <div class="h-px w-full bg-white/5"></div>
-
-                <div>
-                    <div class="flex items-center gap-3 mb-4">
-                        <div class="p-2 rounded-lg bg-purple-500/10">
-                            <i data-lucide="target" class="w-5 h-5 text-purple-400"></i>
-                        </div>
-                        <h3 class="text-xl font-bold">System Objective</h3>
-                    </div>
-                    <p class="text-slate-400 text-sm leading-relaxed">
-                        Design a green finance analytics platform that converts transaction histories into personalized carbon footprint insights, enabling informed and sustainable spending behavior.
-                    </p>
-                </div>
-            </div>
-
-            <!-- Core Components -->
-            <div class="glass-panel p-8 md:p-10 rounded-3xl flex flex-col justify-between">
-                <div class="mb-6">
-                    <div class="flex items-center gap-3 mb-6">
-                        <div class="p-2 rounded-lg bg-pink-500/10">
-                            <i data-lucide="cpu" class="w-5 h-5 text-pink-400"></i>
-                        </div>
-                        <h3 class="text-xl font-bold">Core Functional Components</h3>
-                    </div>
-                    
-                    <ul class="space-y-4">
-                        <li class="flex gap-3 items-start">
-                            <i data-lucide="shopping-cart" class="w-4 h-4 text-slate-500 mt-1"></i>
-                            <div>
-                                <strong class="text-white text-sm block">Merchant Categorization Engine</strong>
-                                <span class="text-slate-500 text-xs">Maps vendors to standardized carbon emission factors.</span>
-                            </div>
-                        </li>
-                        <li class="flex gap-3 items-start">
-                            <i data-lucide="bar-chart-3" class="w-4 h-4 text-slate-500 mt-1"></i>
-                            <div>
-                                <strong class="text-white text-sm block">Impact Dashboards</strong>
-                                <span class="text-slate-500 text-xs">Visualize CO2 output across spending (Travel, Food, Retail).</span>
-                            </div>
-                        </li>
-                        <li class="flex gap-3 items-start">
-                            <i data-lucide="globe" class="w-4 h-4 text-slate-500 mt-1"></i>
-                            <div>
-                                <strong class="text-white text-sm block">Offset Marketplace</strong>
-                                <span class="text-slate-500 text-xs">Direct integration to compensate footprint via verified projects.</span>
-                            </div>
-                        </li>
-                    </ul>
-                </div>
-
-                <!-- Operational Considerations -->
-                <div class="mt-4 p-4 rounded-xl bg-white/5 border border-white/5">
-                    <h4 class="text-xs font-bold uppercase tracking-widest mb-2 text-slate-300">Design Considerations</h4>
-                    <p class="text-xs text-slate-500 leading-relaxed">
-                        Accuracy of emission datasets and strict privacy controls over financial data are essential. Transparency and trust are critical for user adoption.
-                    </p>
-                </div>
-            </div>
-        </div>
-
-        <!-- NEW SECTION: Analytics & Data Visualization -->
-        <div class="w-full max-w-6xl mx-auto mt-20 reveal">
-            <!-- Section Title -->
+        <!-- Analytics Engine Section -->
+        <div class="w-full max-w-6xl mx-auto mt-10 reveal">
             <div class="text-center mb-12">
                 <h2 class="text-3xl md:text-5xl font-bold tracking-tighter mb-4">
                     Analytics <span class="gradient-brand">Engine</span>
                 </h2>
-                <p class="text-slate-400 text-sm md:text-base">Real-time mapping of financial data to environmental impact.</p>
+                <p class="text-slate-400 text-sm md:text-base">Python Backend Connection Active</p>
             </div>
 
-            <!-- Dashboard Grid -->
             <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
                 
-                <!-- Left: Transaction Feed -->
-                <div class="lg:col-span-7 glass-panel rounded-3xl p-6 md:p-8 border-beam">
-                    <h3 class="text-lg font-bold mb-6 flex items-center gap-2">
-                        <i data-lucide="list" class="w-5 h-5 text-blue-400"></i>
-                        Recent Transactions
-                    </h3>
-                    
-                    <div class="space-y-4">
-                        <!-- Transaction 1: High Impact -->
-                        <div class="flex items-center justify-between p-4 rounded-xl bg-white/5 hover:bg-white/10 transition-colors group">
-                            <div class="flex items-center gap-4">
-                                <div class="p-3 rounded-full bg-blue-500/20 text-blue-400 group-hover:scale-110 transition-transform">
-                                    <i data-lucide="plane" class="w-5 h-5"></i>
-                                </div>
-                                <div>
-                                    <div class="font-bold text-sm">Delta Airlines</div>
-                                    <div class="text-xs text-slate-500">Travel • JFK > LHR</div>
-                                </div>
-                            </div>
-                            <div class="text-right">
-                                <div class="font-bold text-sm text-red-500">480 kg CO₂e</div>
-                                <div class="text-xs text-slate-500">-$840.00</div>
-                            </div>
+                <!-- Left: LIVE SIMULATOR (Connected to Python) -->
+                <div class="lg:col-span-5 glass-panel rounded-3xl p-6 md:p-8 border-beam flex flex-col gap-6">
+                    <div class="flex items-center gap-2 mb-2">
+                        <div class="p-2 rounded-lg bg-blue-500/20 text-blue-400">
+                            <i data-lucide="activity" class="w-5 h-5"></i>
                         </div>
+                        <h3 class="text-lg font-bold">Live Transaction</h3>
+                    </div>
 
-                        <!-- Transaction 2: Medium Impact -->
-                        <div class="flex items-center justify-between p-4 rounded-xl bg-white/5 hover:bg-white/10 transition-colors group">
-                            <div class="flex items-center gap-4">
-                                <div class="p-3 rounded-full bg-orange-500/20 text-orange-400 group-hover:scale-110 transition-transform">
-                                    <i data-lucide="car" class="w-5 h-5"></i>
-                                </div>
-                                <div>
-                                    <div class="font-bold text-sm">Uber Technologies</div>
-                                    <div class="text-xs text-slate-500">Transport • 12.4 km</div>
-                                </div>
-                            </div>
-                            <div class="text-right">
-                                <div class="font-bold text-sm text-yellow-400">2.8 kg CO₂e</div>
-                                <div class="text-xs text-slate-500">-$24.50</div>
-                            </div>
-                        </div>
-
-                        <!-- Transaction 3: Groceries -->
-                        <div class="flex items-center justify-between p-4 rounded-xl bg-white/5 hover:bg-white/10 transition-colors group">
-                            <div class="flex items-center gap-4">
-                                <div class="p-3 rounded-full bg-green-500/20 text-green-400 group-hover:scale-110 transition-transform">
-                                    <i data-lucide="shopping-bag" class="w-5 h-5"></i>
-                                </div>
-                                <div>
-                                    <div class="font-bold text-sm">Whole Foods Market</div>
-                                    <div class="text-xs text-slate-500">Groceries • Mixed Basket</div>
-                                </div>
-                            </div>
-                            <div class="text-right">
-                                <div class="font-bold text-sm text-green-400">14.2 kg CO₂e</div>
-                                <div class="text-xs text-slate-500">-$156.20</div>
-                            </div>
+                    <form id="calcForm" class="space-y-4">
+                        <div>
+                            <label class="block text-xs uppercase tracking-widest text-slate-500 mb-2">Merchant</label>
+                            <input type="text" id="merchant" placeholder="e.g. Delta Airlines" class="luma-input">
                         </div>
                         
-                         <!-- Transaction 4: Digital (Low Impact) -->
-                         <div class="flex items-center justify-between p-4 rounded-xl bg-white/5 hover:bg-white/10 transition-colors group">
-                            <div class="flex items-center gap-4">
-                                <div class="p-3 rounded-full bg-purple-500/20 text-purple-400 group-hover:scale-110 transition-transform">
-                                    <i data-lucide="music" class="w-5 h-5"></i>
-                                </div>
-                                <div>
-                                    <div class="font-bold text-sm">Spotify Premium</div>
-                                    <div class="text-xs text-slate-500">Digital Services</div>
-                                </div>
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-xs uppercase tracking-widest text-slate-500 mb-2">Category</label>
+                                <select id="category" class="luma-input bg-black">
+                                    <option value="travel">Travel (Air)</option>
+                                    <option value="transport">Transport (Car)</option>
+                                    <option value="food">Food & Groceries</option>
+                                    <option value="retail">Retail / Shopping</option>
+                                    <option value="digital">Digital Services</option>
+                                </select>
                             </div>
-                            <div class="text-right">
-                                <div class="font-bold text-sm text-slate-400">0.05 kg CO₂e</div>
-                                <div class="text-xs text-slate-500">-$9.99</div>
+                            <div>
+                                <label class="block text-xs uppercase tracking-widest text-slate-500 mb-2">Amount ($)</label>
+                                <input type="number" id="amount" placeholder="0.00" class="luma-input">
                             </div>
                         </div>
+
+                        <button type="submit" class="luma-btn flex items-center justify-center gap-2">
+                            <span>Analyze Impact</span>
+                            <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                        </button>
+                    </form>
+
+                    <!-- Result Area -->
+                    <div id="resultArea" class="hidden mt-4 p-4 rounded-xl bg-white/5 border border-white/10 animate-pulse">
+                        <div class="flex justify-between items-center mb-2">
+                            <span class="text-xs text-slate-400 uppercase tracking-widest">Calculated Impact</span>
+                            <span id="resultTag" class="text-[10px] font-bold uppercase px-2 py-1 rounded bg-slate-700 text-white">Pending</span>
+                        </div>
+                        <div class="flex items-end gap-2">
+                            <span id="resultVal" class="text-4xl font-black text-white">--</span>
+                            <span class="text-sm font-bold text-slate-500 mb-1">kg CO₂e</span>
+                        </div>
+                        <p id="resultMsg" class="text-xs text-slate-400 mt-2 leading-relaxed">
+                            Connecting to neural engine...
+                        </p>
                     </div>
                 </div>
 
-                <!-- Right: Insights & Stats -->
-                <div class="lg:col-span-5 space-y-6">
-                    
-                    <!-- Monthly Summary Card -->
+                <!-- Right: Static Data Feed -->
+                <div class="lg:col-span-7 space-y-6">
+                    <!-- Example Monthly Summary -->
                     <div class="glass-panel rounded-3xl p-6 md:p-8">
                         <div class="flex justify-between items-start mb-4">
                             <h3 class="text-lg font-bold">Monthly Footprint</h3>
                             <div class="px-2 py-1 rounded bg-yellow-500/10 text-yellow-400 text-[10px] font-bold uppercase tracking-widest border border-yellow-500/20">High Impact</div>
                         </div>
-                        
                         <div class="flex items-end gap-2 mb-2">
                             <span class="text-5xl font-black text-white">542</span>
                             <span class="text-sm font-bold text-slate-400 mb-1">kg CO₂e</span>
                         </div>
-                        
                         <div class="w-full h-2 bg-slate-800 rounded-full overflow-hidden mb-2">
                             <div class="h-full bg-gradient-to-r from-green-400 via-yellow-400 to-red-500 w-[75%]"></div>
-                        </div>
-                        
-                        <div class="flex justify-between text-[10px] text-slate-500 uppercase tracking-wider font-bold mt-1">
-                            <span>0 kg</span>
-                            <span>Target: 400 kg</span>
                         </div>
                     </div>
 
                     <!-- AI Insight Card -->
-                     <div class="glass-panel rounded-3xl p-6 md:p-8 relative overflow-hidden transition-colors hover:bg-purple-900/10">
+                     <div class="glass-panel rounded-3xl p-6 md:p-8 relative overflow-hidden">
                         <div class="absolute top-0 right-0 p-4 opacity-20">
                             <i data-lucide="sparkles" class="w-12 h-12 text-purple-400"></i>
                         </div>
@@ -395,66 +302,111 @@
                             AI Insight
                         </h3>
                         <p class="text-sm text-slate-300 leading-relaxed mb-6">
-                            "Your carbon footprint from air travel is <strong class="text-white">40% higher</strong> than the average user. Based on your location, rail alternatives for your next trip to Boston could save <strong class="text-green-400">85 kg CO₂e</strong>."
+                            "Your carbon footprint from air travel is <strong class="text-white">40% higher</strong> than the average user. Rail alternatives for your next trip could save <strong class="text-green-400">85 kg CO₂e</strong>."
                         </p>
-                        
-                        <div class="flex gap-3">
-                            <button class="flex-1 py-3 rounded-xl bg-purple-600/20 border border-purple-500/30 text-purple-300 text-[10px] font-bold uppercase tracking-widest hover:bg-purple-600/30 transition-all">
-                                Offset Now (+$12.50)
-                            </button>
-                             <button class="px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white hover:bg-white/10 transition-all">
-                                <i data-lucide="arrow-right" class="w-4 h-4"></i>
-                            </button>
-                        </div>
                     </div>
                 </div>
             </div>
             
-            <!-- Dataset Attribution / Info -->
             <div class="mt-8 text-center opacity-40">
                 <p class="text-[10px] uppercase tracking-widest">Calculations based on EPA & DEFRA Carbon Emission Factors 2024</p>
             </div>
         </div>
 
-        <!-- Footer / Credits -->
+        <!-- Footer -->
         <footer class="mt-24 text-center reveal">
             <h4 class="text-xs font-bold uppercase tracking-[0.3em] text-slate-500 mb-2">Developed By</h4>
             <div class="text-xl font-bold text-white tracking-widest">
                 Team <span class="text-blue-400">HyperOPS</span>
             </div>
-            
             <div class="mt-8 opacity-50">
                  <i data-lucide="fingerprint" class="w-6 h-6 mx-auto text-slate-600"></i>
             </div>
         </footer>
-
     </div>
 
     <script>
         lucide.createIcons();
 
-        // Parallax Auras
+        // --- ANIMATIONS ---
         const auras = document.querySelectorAll('.aura');
         window.addEventListener('mousemove', (e) => {
             const x = (e.clientX / window.innerWidth - 0.5) * 30;
             const y = (e.clientY / window.innerHeight - 0.5) * 30;
-            
             auras.forEach((aura, index) => {
                 const speed = (index + 1) * 0.3;
                 aura.style.transform = `translate(${x * speed}px, ${y * speed}px)`;
             });
         });
 
-        // Trigger reveal animation on load
         const observer = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.classList.add('active');
-                }
+                if (entry.isIntersecting) entry.target.classList.add('active');
             });
         }, { threshold: 0.1 });
-
         document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+
+        // --- PYTHON BACKEND CONNECTION ---
+        const form = document.getElementById('calcForm');
+        const resultArea = document.getElementById('resultArea');
+        const resultVal = document.getElementById('resultVal');
+        const resultMsg = document.getElementById('resultMsg');
+        const resultTag = document.getElementById('resultTag');
+
+        // IMPORTANT: Change this URL to your live Render/Heroku URL when deployed
+        // For local testing, use: http://127.0.0.1:5000/calculate
+        const BACKEND_URL = "http://127.0.0.1:5000/calculate";
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            // UI Loading State
+            resultArea.classList.remove('hidden');
+            resultVal.innerText = "...";
+            resultMsg.innerText = "Processing via Python Neural Engine...";
+            resultTag.className = "text-[10px] font-bold uppercase px-2 py-1 rounded bg-blue-500/20 text-blue-400 animate-pulse";
+            resultTag.innerText = "Analyzing";
+
+            const data = {
+                merchant: document.getElementById('merchant').value,
+                category: document.getElementById('category').value,
+                amount: parseFloat(document.getElementById('amount').value)
+            };
+
+            try {
+                // Fetch from Python
+                const response = await fetch(BACKEND_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+
+                if (!response.ok) throw new Error("Backend connection failed");
+
+                const result = await response.json();
+
+                // UI Success State
+                resultVal.innerText = result.co2;
+                resultMsg.innerText = result.insight;
+                
+                // Color coding based on impact
+                if(result.co2 > 50) {
+                    resultTag.className = "text-[10px] font-bold uppercase px-2 py-1 rounded bg-red-500/20 text-red-400";
+                    resultTag.innerText = "High Impact";
+                } else {
+                    resultTag.className = "text-[10px] font-bold uppercase px-2 py-1 rounded bg-green-500/20 text-green-400";
+                    resultTag.innerText = "Eco Friendly";
+                }
+
+            } catch (error) {
+                console.error(error);
+                resultVal.innerText = "ERR";
+                resultMsg.innerText = "Could not connect to Python Backend. Ensure Flask is running.";
+                resultTag.className = "text-[10px] font-bold uppercase px-2 py-1 rounded bg-red-500/20 text-red-400";
+                resultTag.innerText = "Offline";
+            }
+        });
     </script>
 </body>
 </html>

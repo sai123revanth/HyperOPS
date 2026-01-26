@@ -8,3 +8,5 @@ langchain-groq
 scikit-learn
 selenium
 webdriver-manager
+flask
+flask-cors
