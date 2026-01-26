@@ -207,23 +207,16 @@ def main():
     
     st.markdown("---")
     
-    # Create a "Top Nav" feel using columns
-    nav_col1, nav_col2 = st.columns([3, 1])
+    # Date Filter
+    min_date = data_df['Date'].min()
+    max_date = data_df['Date'].max()
     
-    with nav_col1:
-        # Date Filter
-        min_date = data_df['Date'].min()
-        max_date = data_df['Date'].max()
-        
-        date_range = st.date_input(
-            "Analysis Period",
-            value=(min_date, max_date),
-            min_value=min_date,
-            max_value=max_date
-        )
-        
-    with nav_col2:
-        st.info("💡 **Engine Status:** Active\n\nModel: `v2.1-Standard`")
+    date_range = st.date_input(
+        "Analysis Period",
+        value=(min_date, max_date),
+        min_value=min_date,
+        max_value=max_date
+    )
 
     st.divider()
 
