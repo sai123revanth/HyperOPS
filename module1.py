@@ -521,14 +521,12 @@ def main():
     
     trees_needed, offset_cost = engine.calculate_offsets(total_carbon)
     
-    col_off1, col_off2, col_off3 = st.columns(3)
+    col_off1, col_off2 = st.columns(2)
     
     with col_off1:
         st.metric("Trees Required", f"{trees_needed:.1f} 🌳", help="Number of mature trees needed to absorb this amount of CO2 in one year.")
     with col_off2:
         st.metric("Est. Offset Cost", f"₹{offset_cost:,.2f}", help="Approximate market cost to purchase verified carbon credits for this amount.")
-    with col_off3:
-        st.button("🌱 Purchase Carbon Credits (Demo)", type="primary")
 
     st.markdown("<br><br><br>", unsafe_allow_html=True)
 
