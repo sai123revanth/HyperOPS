@@ -1,41 +1,62 @@
 <!DOCTYPE html>
-<html lang="en" class="scroll-smooth">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>GREENIQ | Team HyperOPS</title>
-    <meta name="description" content="GREENIQ - Automated Carbon Footprint Tracking via Transaction Analytics">
-
+    
     <!-- Theme Color -->
     <meta name="theme-color" content="#000000">
     
     <!-- Favicon -->
     <link rel="icon" type="image/svg+xml" href="favicon.svg">
     
+    <!-- Libraries -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@200;300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
     <style>
-        /* Exact Theme Colors */
+        /* --- GREENIQ / HyperOPS Design System --- */
         :root {
             --bg: #000000;
             --accent-1: #3b82f6; /* Blue */
             --accent-2: #8b5cf6; /* Purple */
             --accent-3: #ec4899; /* Pink */
-            --glass: rgba(255, 255, 255, 0.03);
             --border: rgba(255, 255, 255, 0.1);
+        }
+
+        /* DARK SCROLLBAR STYLING - Removes "White Bars" */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: transparent; 
+        }
+        ::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.1); 
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(255, 255, 255, 0.2); 
+        }
+
+        html, body {
+            height: 100%;
+            width: 100%;
+            margin: 0;
+            padding: 0;
+            overflow: hidden; /* CRITICAL: Prevents page scrolling */
         }
 
         body {
             font-family: 'Plus Jakarta Sans', sans-serif;
             background-color: var(--bg);
             color: #ffffff;
-            overflow-x: hidden;
-            overflow-y: auto;
             letter-spacing: -0.01em;
-            margin: 0;
-            width: 100%;
-            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
         }
 
         /* Fixed Background System */
@@ -81,22 +102,18 @@
             100% { transform: translate(30px, 30px) scale(1.05); }
         }
 
+        /* Glass Panels */
         .glass-panel {
-            background: rgba(255, 255, 255, 0.03);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
+            background: rgba(255, 255, 255, 0.02);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
             border: 1px solid var(--border);
             transition: transform 0.3s ease, border-color 0.3s ease;
         }
         
-        .glass-panel:hover {
-            border-color: rgba(255,255,255,0.2);
-            transform: translateY(-2px);
-        }
-
+        /* The HyperOPS Border Beam Effect */
         .border-beam {
             position: relative;
-            z-index: 1;
         }
         
         .border-beam::before {
@@ -112,6 +129,7 @@
             mask-composite: exclude;
             animation: spin-beam 5s linear infinite;
             pointer-events: none;
+            z-index: 10;
         }
 
         @keyframes spin-beam {
@@ -136,7 +154,7 @@
         }
 
         .tech-tag {
-            font-size: 0.7rem;
+            font-size: 0.65rem;
             letter-spacing: 0.1em;
             text-transform: uppercase;
             padding: 0.25rem 0.75rem;
@@ -146,260 +164,209 @@
             color: #94a3b8;
         }
 
-        /* Form Styling */
-        .luma-input {
+        /* Streamlit Iframe Specifics */
+        .streamlit-container {
             width: 100%;
-            background: rgba(0,0,0,0.3);
-            border: 1px solid rgba(255,255,255,0.1);
-            color: white;
-            padding: 0.75rem 1rem;
-            border-radius: 0.75rem;
-            outline: none;
+            height: 100%; /* Fill container */
+            position: relative;
+            overflow: hidden; /* Clips the extended iframe height */
+            border-radius: 1.5rem;
+        }
+
+        .streamlit-frame {
+            width: 100%;
+            /* CRITICAL FIX: 
+               Extend height by 50px to push the fixed bottom footer (watermark) 
+               out of the visible "overflow: hidden" container area.
+            */
+            height: calc(100% + 50px); 
+            border: none;
+            margin-top: -2px; 
+            background: transparent;
+            
+            /* Zoom to hide side margins/bars */
+            transform: scale(1.05);
+            transform-origin: center top;
+        }
+
+        /* Loading Spinner */
+        .loader-overlay {
+            position: absolute;
+            inset: 0;
+            background: #000000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 20;
+            transition: opacity 0.5s ease;
+        }
+
+        .stat-card {
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.05);
+            padding: 1rem;
+            border-radius: 1rem;
             transition: all 0.3s;
         }
-        .luma-input:focus {
-            border-color: var(--accent-1);
-            background: rgba(59, 130, 246, 0.05);
-        }
-        .luma-btn {
-            background: linear-gradient(to right, var(--accent-1), var(--accent-2));
-            color: white;
-            padding: 0.75rem 1.5rem;
-            border-radius: 0.75rem;
-            font-weight: bold;
-            text-transform: uppercase;
-            letter-spacing: 0.1em;
-            font-size: 0.75rem;
-            width: 100%;
-            transition: all 0.3s;
-        }
-        .luma-btn:hover {
-            opacity: 0.9;
-            transform: scale(1.02);
-            box-shadow: 0 0 20px rgba(59, 130, 246, 0.4);
-        }
-        
-        /* Ensure background isn't clicked */
-        .bg-fixed-container {
-            pointer-events: none;
+        .stat-card:hover {
+            background: rgba(255,255,255,0.05);
+            border-color: rgba(255,255,255,0.1);
         }
     </style>
 </head>
 <body>
+    <!-- Background System -->
     <div class="bg-fixed-container">
         <div class="grid-bg"></div>
         <div class="aura aura-1"></div>
         <div class="aura aura-2"></div>
     </div>
 
-    <!-- Main Content Wrapper -->
-    <div class="relative z-10 w-full min-h-screen flex flex-col items-center justify-start pt-20 pb-20 px-6">
+    <!-- Main Content Wrapper: Forced Height 100vh. Reduced padding (pt-4, pb-4) for more vertical space -->
+    <div class="relative z-10 w-full h-screen flex flex-col pt-4 pb-4 px-4 md:px-6 overflow-hidden">
         
-        <!-- Header -->
-        <main class="w-full max-w-5xl mx-auto text-center mb-20 reveal active">
-            <div class="inline-flex items-center gap-2 mb-6 opacity-70">
-                <i data-lucide="leaf" class="w-4 h-4 text-white"></i>
-                <span class="text-[10px] uppercase tracking-[0.3em] font-bold">Category: Software</span>
-            </div>
-            <h1 class="text-6xl md:text-8xl lg:text-9xl font-black tracking-tighter leading-none mb-4">
-                <span class="gradient-brand">GREENIQ</span>
-            </h1>
-            <p class="text-lg md:text-2xl text-slate-400 font-light tracking-wide max-w-3xl mx-auto mb-8">
-                Automated Carbon Footprint Tracking via Transaction Analytics
-            </p>
-            <div class="flex flex-wrap justify-center gap-3 mb-12">
-                <span class="tech-tag">Data Analytics</span>
-                <span class="tech-tag">API Integration</span>
-                <span class="tech-tag">ESG</span>
-            </div>
-            <div class="h-px w-24 bg-gradient-to-r from-transparent via-white/20 to-transparent mx-auto"></div>
-        </main>
-
-        <!-- Analytics Engine Section -->
-        <div class="w-full max-w-6xl mx-auto mt-10 reveal">
-            <div class="text-center mb-12">
-                <h2 class="text-3xl md:text-5xl font-bold tracking-tighter mb-4">
-                    Analytics <span class="gradient-brand">Engine</span>
-                </h2>
-                <p class="text-slate-400 text-sm md:text-base">Python Backend Connection Active</p>
-            </div>
-
-            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
-                
-                <!-- Left: LIVE SIMULATOR -->
-                <div class="lg:col-span-5 glass-panel rounded-3xl p-6 md:p-8 border-beam flex flex-col gap-6">
-                    <div class="flex items-center gap-2 mb-2">
-                        <div class="p-2 rounded-lg bg-blue-500/20 text-blue-400">
-                            <i data-lucide="activity" class="w-5 h-5"></i>
-                        </div>
-                        <h3 class="text-lg font-bold">Live Transaction</h3>
-                    </div>
-
-                    <form id="calcForm" class="space-y-4">
-                        <div>
-                            <label class="block text-xs uppercase tracking-widest text-slate-500 mb-2">Merchant</label>
-                            <input type="text" id="merchant" placeholder="e.g. Delta Airlines" class="luma-input">
-                        </div>
-                        
-                        <div class="grid grid-cols-2 gap-4">
-                            <div>
-                                <label class="block text-xs uppercase tracking-widest text-slate-500 mb-2">Category</label>
-                                <select id="category" class="luma-input bg-black">
-                                    <option value="travel">Travel (Air)</option>
-                                    <option value="transport">Transport (Car)</option>
-                                    <option value="food">Food & Groceries</option>
-                                    <option value="retail">Retail / Shopping</option>
-                                    <option value="digital">Digital Services</option>
-                                </select>
-                            </div>
-                            <div>
-                                <label class="block text-xs uppercase tracking-widest text-slate-500 mb-2">Amount ($)</label>
-                                <input type="number" id="amount" placeholder="0.00" class="luma-input">
-                            </div>
-                        </div>
-
-                        <button type="submit" class="luma-btn flex items-center justify-center gap-2">
-                            <span>Analyze Impact</span>
-                            <i data-lucide="arrow-right" class="w-4 h-4"></i>
-                        </button>
-                    </form>
-
-                    <!-- Result Area -->
-                    <div id="resultArea" class="hidden mt-4 p-4 rounded-xl bg-white/5 border border-white/10 animate-pulse">
-                        <div class="flex justify-between items-center mb-2">
-                            <span class="text-xs text-slate-400 uppercase tracking-widest">Calculated Impact</span>
-                            <span id="resultTag" class="text-[10px] font-bold uppercase px-2 py-1 rounded bg-slate-700 text-white">Pending</span>
-                        </div>
-                        <div class="flex items-end gap-2">
-                            <span id="resultVal" class="text-4xl font-black text-white">--</span>
-                            <span class="text-sm font-bold text-slate-500 mb-1">kg CO₂e</span>
-                        </div>
-                        <p id="resultMsg" class="text-xs text-slate-400 mt-2 leading-relaxed">
-                            Connecting to neural engine...
-                        </p>
-                    </div>
+        <!-- Header: Reduced margin (mb-4) for more vertical space -->
+        <header class="w-full max-w-[98rem] mx-auto flex flex-col md:flex-row justify-between items-center mb-4 reveal active gap-4 shrink-0">
+            <div class="flex items-center gap-4">
+                <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-blue-600 to-purple-600 flex items-center justify-center shadow-lg shadow-blue-900/40">
+                    <i data-lucide="leaf" class="w-6 h-6 text-white"></i>
                 </div>
-
-                <!-- Right: Static Data Feed -->
-                <div class="lg:col-span-7 space-y-6">
-                    <!-- Example Monthly Summary -->
-                    <div class="glass-panel rounded-3xl p-6 md:p-8">
-                        <div class="flex justify-between items-start mb-4">
-                            <h3 class="text-lg font-bold">Monthly Footprint</h3>
-                            <div class="px-2 py-1 rounded bg-yellow-500/10 text-yellow-400 text-[10px] font-bold uppercase tracking-widest border border-yellow-500/20">High Impact</div>
-                        </div>
-                        <div class="flex items-end gap-2 mb-2">
-                            <span class="text-5xl font-black text-white">542</span>
-                            <span class="text-sm font-bold text-slate-400 mb-1">kg CO₂e</span>
-                        </div>
-                        <div class="w-full h-2 bg-slate-800 rounded-full overflow-hidden mb-2">
-                            <div class="h-full bg-gradient-to-r from-green-400 via-yellow-400 to-red-500 w-[75%]"></div>
-                        </div>
-                    </div>
-
-                    <!-- AI Insight Card -->
-                     <div class="glass-panel rounded-3xl p-6 md:p-8 relative overflow-hidden">
-                        <div class="absolute top-0 right-0 p-4 opacity-20">
-                            <i data-lucide="sparkles" class="w-12 h-12 text-purple-400"></i>
-                        </div>
-                        <h3 class="text-lg font-bold mb-3 text-purple-400 flex items-center gap-2">
-                             <i data-lucide="zap" class="w-4 h-4"></i>
-                            AI Insight
-                        </h3>
-                        <p class="text-sm text-slate-300 leading-relaxed mb-6">
-                            "Your carbon footprint from air travel is <strong class="text-white">40% higher</strong> than the average user. Rail alternatives for your next trip could save <strong class="text-green-400">85 kg CO₂e</strong>."
-                        </p>
+                <div>
+                    <h1 class="text-3xl font-black tracking-tighter leading-none">
+                        <span class="gradient-brand">GREENIQ</span>
+                    </h1>
+                    <div class="flex items-center gap-2 mt-1 opacity-60">
+                         <span class="text-[10px] uppercase tracking-[0.2em] font-bold">HyperOPS Engine</span>
                     </div>
                 </div>
             </div>
             
-            <div class="mt-8 text-center opacity-40">
-                <p class="text-[10px] uppercase tracking-widest">Calculations based on EPA & DEFRA Carbon Emission Factors 2024</p>
+            <div class="flex flex-wrap justify-center gap-2">
+                <span class="tech-tag">Real-Time</span>
+                <span class="tech-tag">Visualizer</span>
+                <span class="tech-tag">Live Env</span>
             </div>
-        </div>
+        </header>
 
-        <!-- Footer -->
-        <footer class="mt-24 text-center reveal">
-            <h4 class="text-xs font-bold uppercase tracking-[0.3em] text-slate-500 mb-2">Developed By</h4>
-            <div class="text-xl font-bold text-white tracking-widest">
-                Team <span class="text-blue-400">HyperOPS</span>
-            </div>
-            <div class="mt-8 opacity-50">
-                 <i data-lucide="fingerprint" class="w-6 h-6 mx-auto text-slate-600"></i>
-            </div>
-        </footer>
+        <!-- Two Panel Layout: Flex Grow to Fill Height. Reduced gap (gap-4) for tighter fit -->
+        <main class="w-full max-w-[98rem] mx-auto grid grid-cols-1 lg:grid-cols-4 gap-4 flex-grow min-h-0 reveal">
+            
+            <!-- LEFT PANEL: Context & Stats -->
+            <aside class="lg:col-span-1 flex flex-col gap-4 h-full overflow-hidden">
+                
+                <!-- Status Panel -->
+                <div class="glass-panel rounded-3xl p-6 flex-grow flex flex-col gap-6 overflow-y-auto">
+                    <div class="flex items-center gap-2 mb-2 shrink-0">
+                        <i data-lucide="cpu" class="w-5 h-5 text-blue-400"></i>
+                        <h2 class="text-lg font-bold">System Status</h2>
+                    </div>
+
+                    <!-- Stat Stack -->
+                    <div class="space-y-3 shrink-0">
+                        <div class="stat-card">
+                            <div class="flex justify-between items-center mb-1">
+                                <span class="text-[10px] text-slate-400 uppercase tracking-widest">Latency</span>
+                                <i data-lucide="wifi" class="w-3 h-3 text-green-400"></i>
+                            </div>
+                            <div class="text-2xl font-bold text-white">45<span class="text-sm text-slate-500 font-normal">ms</span></div>
+                        </div>
+
+                        <div class="stat-card">
+                            <div class="flex justify-between items-center mb-1">
+                                <span class="text-[10px] text-slate-400 uppercase tracking-widest">Engine</span>
+                                <i data-lucide="server" class="w-3 h-3 text-blue-400"></i>
+                            </div>
+                            <div class="text-sm font-bold text-blue-300">Streamlit Cloud</div>
+                        </div>
+
+                        <div class="stat-card">
+                            <div class="flex justify-between items-center mb-1">
+                                <span class="text-[10px] text-slate-400 uppercase tracking-widest">Security</span>
+                                <i data-lucide="shield-check" class="w-3 h-3 text-purple-400"></i>
+                            </div>
+                            <div class="text-sm font-bold text-purple-300">Encrypted (TLS)</div>
+                        </div>
+
+                        <div class="stat-card border-green-500/20 bg-green-500/5">
+                            <div class="flex justify-between items-center mb-1">
+                                <span class="text-[10px] text-green-400 uppercase tracking-widest">Operational</span>
+                                <div class="w-2 h-2 rounded-full bg-green-400 animate-pulse"></div>
+                            </div>
+                            <div class="text-sm font-bold text-green-300">System Normal</div>
+                        </div>
+                    </div>
+
+                    <div class="mt-auto pt-6 border-t border-white/10 shrink-0">
+                        <h3 class="text-xs font-bold text-slate-500 uppercase tracking-widest mb-3">Active Region</h3>
+                        <div class="flex items-center gap-3 opacity-80">
+                            <div class="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center">
+                                <i data-lucide="globe" class="w-4 h-4 text-slate-300"></i>
+                            </div>
+                            <div>
+                                <div class="text-xs text-white font-semibold">Asia Pacific</div>
+                                <div class="text-[10px] text-slate-400">ap-south-1</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Footer Credit (Moved to sidebar) -->
+                <div class="glass-panel rounded-2xl p-4 text-center shrink-0">
+                     <div class="text-[10px] font-bold uppercase tracking-[0.2em] text-slate-500 mb-1">Developed By</div>
+                    <div class="text-sm font-bold text-white tracking-widest">
+                        Team <span class="text-blue-400">HyperOPS</span>
+                    </div>
+                </div>
+
+            </aside>
+
+            <!-- RIGHT PANEL: Main Visualizer -->
+            <section class="lg:col-span-3 h-full overflow-hidden">
+                <div class="glass-panel border-beam rounded-3xl p-1 md:p-2 relative shadow-2xl shadow-blue-900/20 h-full">
+                    
+                    <div class="streamlit-container bg-black/40 rounded-2xl relative h-full">
+                        
+                        <!-- Loader -->
+                        <div id="loader" class="loader-overlay rounded-2xl">
+                            <div class="text-center">
+                                <i data-lucide="loader-2" class="w-10 h-10 text-blue-500 animate-spin mx-auto mb-4"></i>
+                                <p class="text-xs uppercase tracking-widest text-slate-400">Establishing Secure Uplink...</p>
+                            </div>
+                        </div>
+
+                        <!-- IFRAME -->
+                        <iframe 
+                            id="vizIframe"
+                            src="https://hyperops-kprcoarnzbxxzuvbdthhtx.streamlit.app/?embed=true" 
+                            class="streamlit-frame rounded-2xl"
+                            title="GreenIQ Dashboard"
+                            allow="camera; microphone; geolocation"
+                        ></iframe>
+                        
+                    </div>
+
+                    <!-- Decorative UI Elements -->
+                    <div class="absolute top-6 right-6 flex gap-2 pointer-events-none z-10">
+                        <div class="w-2 h-2 rounded-full bg-green-500 animate-pulse shadow-[0_0_10px_#22c55e]"></div>
+                        <span class="text-[10px] uppercase font-bold text-green-500 tracking-wider">Live</span>
+                    </div>
+                </div>
+            </section>
+        </main>
     </div>
 
     <script>
         lucide.createIcons();
 
-        // ----------------------------------------------------
-        // 1. BACKEND URL SETUP (VERCEL INTEGRATED)
-        // ----------------------------------------------------
-        // This is crucial. It uses a relative path so Vercel 
-        // automatically routes it to your Python backend in /api
-        const BACKEND_URL = "/api/calculate"; 
+        // Reveal Animation on Scroll
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) entry.target.classList.add('active');
+            });
+        }, { threshold: 0.1 });
+        document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
 
-
-        // ----------------------------------------------------
-        // 2. PYTHON BACKEND CONNECTION (CALCULATOR)
-        // ----------------------------------------------------
-        const form = document.getElementById('calcForm');
-        const resultArea = document.getElementById('resultArea');
-        const resultVal = document.getElementById('resultVal');
-        const resultMsg = document.getElementById('resultMsg');
-        const resultTag = document.getElementById('resultTag');
-
-        form.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            
-            // UI Loading State
-            resultArea.classList.remove('hidden');
-            resultVal.innerText = "...";
-            resultMsg.innerText = "Processing via Python Neural Engine...";
-            resultTag.className = "text-[10px] font-bold uppercase px-2 py-1 rounded bg-blue-500/20 text-blue-400 animate-pulse";
-            resultTag.innerText = "Analyzing";
-
-            const data = {
-                merchant: document.getElementById('merchant').value,
-                category: document.getElementById('category').value,
-                amount: parseFloat(document.getElementById('amount').value)
-            };
-
-            try {
-                // The Fetch Call to Vercel Python Backend
-                const response = await fetch(BACKEND_URL, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(data)
-                });
-
-                if (!response.ok) throw new Error("Backend connection failed");
-
-                const result = await response.json();
-
-                // UI Success State
-                resultVal.innerText = result.co2;
-                resultMsg.innerText = result.insight;
-                
-                if(result.co2 > 50) {
-                    resultTag.className = "text-[10px] font-bold uppercase px-2 py-1 rounded bg-red-500/20 text-red-400";
-                    resultTag.innerText = "High Impact";
-                } else {
-                    resultTag.className = "text-[10px] font-bold uppercase px-2 py-1 rounded bg-green-500/20 text-green-400";
-                    resultTag.innerText = "Eco Friendly";
-                }
-
-            } catch (error) {
-                console.error(error);
-                resultVal.innerText = "ERR";
-                resultMsg.innerText = "Connection Failed. Ensure the Python backend is deployed to Vercel.";
-                resultTag.className = "text-[10px] font-bold uppercase px-2 py-1 rounded bg-red-500/20 text-red-400";
-                resultTag.innerText = "Offline";
-            }
-        });
-
-        // Animations
+        // Background Aura Mouse Movement
         const auras = document.querySelectorAll('.aura');
         window.addEventListener('mousemove', (e) => {
             const x = (e.clientX / window.innerWidth - 0.5) * 30;
@@ -410,12 +377,19 @@
             });
         });
 
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) entry.target.classList.add('active');
-            });
-        }, { threshold: 0.1 });
-        document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+        // Iframe Loading Logic
+        const iframe = document.getElementById('vizIframe');
+        const loader = document.getElementById('loader');
+
+        // Note: iframe.onload triggers when the iframe content is fully loaded
+        iframe.onload = function() {
+            setTimeout(() => {
+                loader.style.opacity = '0';
+                setTimeout(() => {
+                    loader.style.display = 'none';
+                }, 500);
+            }, 1500); // Slight delay for smoother visual transition
+        };
     </script>
 </body>
 </html>
