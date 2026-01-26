@@ -12,7 +12,7 @@ import time
 # --- CONFIGURATION ---
 # Add your Streamlit app URLs here in the list
 DEFAULT_URLS = [
-    "link here",
+    "https://hyperops-dyu5cgjkrxdr5gnralziv4.streamlit.app/",
     # Add more links below like this:
     "link here"
 ]
