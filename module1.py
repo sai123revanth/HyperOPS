@@ -20,7 +20,8 @@ st.markdown("""
 <style>
     /* Main Background & Text */
     .stApp {
-        background-color: #0e1117;
+        background: linear-gradient(135deg, #0e1117 0%, #002b18 100%);
+        background-attachment: fixed;
         color: #fafafa;
     }
     
@@ -307,58 +308,3 @@ def main():
     
     # Sort by impact
     display_df = filtered_df[['Date', 'Category', 'Subcategory', 'Note', 'Amount', 'Emission_Factor', 'Carbon_Footprint_kg', 'Eco_Score', 'Explanation']].sort_values(by='Carbon_Footprint_kg', ascending=False)
-    
-    # Config for styling the dataframe
-    st.dataframe(
-        display_df,
-        use_container_width=True,
-        column_config={
-            "Date": st.column_config.DateColumn("Date", format="DD/MM/YYYY"),
-            "Amount": st.column_config.NumberColumn("Amount (₹)", format="₹%d"),
-            "Emission_Factor": st.column_config.NumberColumn("Emiss. Factor", format="%.2f"),
-            "Carbon_Footprint_kg": st.column_config.ProgressColumn(
-                "Carbon Impact", 
-                help="Relative impact", 
-                format="%.2f kg",
-                min_value=0, 
-                max_value=float(display_df['Carbon_Footprint_kg'].max()) if not display_df.empty else 1.0
-            ),
-            "Eco_Score": st.column_config.NumberColumn(
-                "Score",
-                help="0 (Bad) - 100 (Good)",
-                format="%d"
-            ),
-            "Note": st.column_config.TextColumn("Details", width="medium"),
-            "Explanation": st.column_config.TextColumn("Engine Logic", width="large")
-        },
-        height=400
-    )
-
-    # 4. EXPLAINABILITY SECTION (Deep Dive)
-    st.markdown("---")
-    st.subheader("🔍 Transaction Inspector")
-    
-    col_select, col_explain = st.columns([1, 2])
-    
-    with col_select:
-        selected_idx = st.selectbox("Select a High-Impact Transaction to Audit:", display_df.index[:10], format_func=lambda x: f"{display_df.loc[x, 'Note']} ({display_df.loc[x, 'Amount']} INR)")
-        
-    with col_explain:
-        tx = display_df.loc[selected_idx]
-        
-        st.markdown(f"#### Audit: {tx['Note']}")
-        
-        e1, e2, e3 = st.columns(3)
-        e1.metric("Category", tx['Category'])
-        e2.metric("Emission Factor", f"{tx['Emission_Factor']:.2f}")
-        e3.metric("Attributed Carbon", f"{tx['Carbon_Footprint_kg']:.2f} kg")
-        
-        st.info(f"**Engine Reason:** {tx['Explanation']}")
-        
-        if tx['Eco_Score'] < 50:
-            st.warning("⚠️ **Improvement Tip:** Consider switching to public transport or grouping orders to reduce this category's footprint.")
-        else:
-            st.success("✅ **Good Choice:** This transaction has a relatively low carbon intensity.")
-
-if __name__ == "__main__":
-    main()
