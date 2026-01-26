@@ -1,60 +1,45 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
   <defs>
-    <!-- Brand Gradient (Diagonal) -->
-    <linearGradient id="hyperGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#3b82f6" /> <!-- Blue -->
-      <stop offset="50%" stop-color="#8b5cf6" /> <!-- Purple -->
-      <stop offset="100%" stop-color="#ec4899" /> <!-- Pink -->
+    <!-- Modern Gradient: Fresh Green to Deep Emerald -->
+    <linearGradient id="leafGradient" x1="0%" y1="100%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#22c55e;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#86efac;stop-opacity:1" />
     </linearGradient>
     
-    <!-- Hex Mesh Pattern -->
-    <pattern id="hexMesh" x="0" y="0" width="20" height="20" patternUnits="userSpaceOnUse">
-       <path d="M10,0 L20,5 L20,15 L10,20 L0,15 L0,5 Z" fill="none" stroke="#ffffff" stroke-width="1" opacity="0.15" />
-    </pattern>
-
-    <!-- Aura Glow Filter -->
-    <filter id="auraBlur" x="-50%" y="-50%" width="200%" height="200%">
-      <feGaussianBlur stdDeviation="40" result="blur" />
-    </filter>
-    
-    <!-- Shape Shadow -->
-    <filter id="dropShadow" x="-20%" y="-20%" width="140%" height="140%">
-      <feDropShadow dx="4" dy="4" stdDeviation="4" flood-color="#000" flood-opacity="0.5"/>
+    <!-- Subtle Drop Shadow for depth -->
+    <filter id="softShadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur in="SourceAlpha" stdDeviation="15" />
+      <feOffset dx="5" dy="10" result="offsetblur" />
+      <feComponentTransfer>
+        <feFuncA type="linear" slope="0.3" />
+      </feComponentTransfer>
+      <feMerge>
+        <feMergeNode />
+        <feMergeNode in="SourceGraphic" />
+      </feMerge>
     </filter>
   </defs>
-  
-  <!-- 1. Base Container (Dark Void) -->
-  <rect x="0" y="0" width="512" height="512" rx="100" fill="#0a0a0a" />
-  
-  <!-- 2. Background Auras (Matching Website Theme) -->
-  <circle cx="100" cy="100" r="120" fill="#3b82f6" opacity="0.2" filter="url(#auraBlur)" />
-  <circle cx="412" cy="412" r="120" fill="#ec4899" opacity="0.2" filter="url(#auraBlur)" />
 
-  <!-- 3. The Aero-H Construction -->
-  <g filter="url(#dropShadow)">
-    <!-- Left Pillar (Leaning Right) -->
-    <path d="M 140 80 L 220 80 L 190 432 L 110 432 Z" fill="url(#hyperGradient)" />
-    
-    <!-- Right Pillar (Leaning Right) -->
-    <path d="M 340 80 L 420 80 L 390 432 L 310 432 Z" fill="url(#hyperGradient)" />
-    
-    <!-- Floating Crossbar (Aerodynamic Wing shape) -->
-    <path d="M 190 230 L 335 230 L 325 282 L 180 282 Z" fill="url(#hyperGradient)" />
+  <!-- Main Leaf Shape -->
+  <g filter="url(#softShadow)">
+    <!-- The leaf body: A cleaner diagonal leaf shape -->
+    <!-- M100,412 is the stem base. 412,100 is the tip. 
+         Control points create the width. -->
+    <path d="M100,412 Q80,120 412,100 Q430,380 100,412 Z" 
+          fill="url(#leafGradient)" />
+          
+    <!-- Central Vein -->
+    <path d="M110,402 Q256,256 400,110" 
+          stroke="white" 
+          stroke-width="20" 
+          stroke-linecap="round" 
+          fill="none" 
+          opacity="0.3" />
+          
+    <!-- Stem -->
+    <path d="M110,402 Q90,422 70,442" 
+          stroke="url(#leafGradient)" 
+          stroke-width="35" 
+          stroke-linecap="round" />
   </g>
-  
-  <!-- 4. Matrix Texture Overlay (Masked to the H shape logic) -->
-  <!-- We simply replicate the paths with the pattern fill -->
-  <g pointer-events="none">
-    <path d="M 140 80 L 220 80 L 190 432 L 110 432 Z" fill="url(#hexMesh)" />
-    <path d="M 340 80 L 420 80 L 390 432 L 310 432 Z" fill="url(#hexMesh)" />
-    <path d="M 190 230 L 335 230 L 325 282 L 180 282 Z" fill="url(#hexMesh)" />
-  </g>
-  
-  <!-- 5. High-Tech Highlights (White Accents) -->
-  <circle cx="205" cy="80" r="4" fill="#ffffff" opacity="0.8" />
-  <circle cx="125" cy="432" r="4" fill="#ffffff" opacity="0.8" />
-  <circle cx="405" cy="80" r="4" fill="#ffffff" opacity="0.8" />
-  <circle cx="325" cy="432" r="4" fill="#ffffff" opacity="0.8" />
-  
 </svg>
