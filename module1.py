@@ -364,5 +364,8 @@ def main():
         else:
             st.success("✅ **Good Choice:** This transaction has a relatively low carbon intensity.")
 
+    # Added extra space at the bottom for better scroll/layout
+    st.markdown("<br><br><br><br>", unsafe_allow_html=True)
+
 if __name__ == "__main__":
     main()
