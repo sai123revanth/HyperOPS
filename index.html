@@ -267,7 +267,153 @@
                     </p>
                 </div>
             </div>
+        </div>
 
+        <!-- NEW SECTION: Analytics & Data Visualization -->
+        <div class="w-full max-w-6xl mx-auto mt-20 reveal">
+            <!-- Section Title -->
+            <div class="text-center mb-12">
+                <h2 class="text-3xl md:text-5xl font-bold tracking-tighter mb-4">
+                    Analytics <span class="gradient-brand">Engine</span>
+                </h2>
+                <p class="text-slate-400 text-sm md:text-base">Real-time mapping of financial data to environmental impact.</p>
+            </div>
+
+            <!-- Dashboard Grid -->
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                
+                <!-- Left: Transaction Feed -->
+                <div class="lg:col-span-7 glass-panel rounded-3xl p-6 md:p-8 border-beam">
+                    <h3 class="text-lg font-bold mb-6 flex items-center gap-2">
+                        <i data-lucide="list" class="w-5 h-5 text-blue-400"></i>
+                        Recent Transactions
+                    </h3>
+                    
+                    <div class="space-y-4">
+                        <!-- Transaction 1: High Impact -->
+                        <div class="flex items-center justify-between p-4 rounded-xl bg-white/5 hover:bg-white/10 transition-colors group">
+                            <div class="flex items-center gap-4">
+                                <div class="p-3 rounded-full bg-blue-500/20 text-blue-400 group-hover:scale-110 transition-transform">
+                                    <i data-lucide="plane" class="w-5 h-5"></i>
+                                </div>
+                                <div>
+                                    <div class="font-bold text-sm">Delta Airlines</div>
+                                    <div class="text-xs text-slate-500">Travel • JFK > LHR</div>
+                                </div>
+                            </div>
+                            <div class="text-right">
+                                <div class="font-bold text-sm text-red-500">480 kg CO₂e</div>
+                                <div class="text-xs text-slate-500">-$840.00</div>
+                            </div>
+                        </div>
+
+                        <!-- Transaction 2: Medium Impact -->
+                        <div class="flex items-center justify-between p-4 rounded-xl bg-white/5 hover:bg-white/10 transition-colors group">
+                            <div class="flex items-center gap-4">
+                                <div class="p-3 rounded-full bg-orange-500/20 text-orange-400 group-hover:scale-110 transition-transform">
+                                    <i data-lucide="car" class="w-5 h-5"></i>
+                                </div>
+                                <div>
+                                    <div class="font-bold text-sm">Uber Technologies</div>
+                                    <div class="text-xs text-slate-500">Transport • 12.4 km</div>
+                                </div>
+                            </div>
+                            <div class="text-right">
+                                <div class="font-bold text-sm text-yellow-400">2.8 kg CO₂e</div>
+                                <div class="text-xs text-slate-500">-$24.50</div>
+                            </div>
+                        </div>
+
+                        <!-- Transaction 3: Groceries -->
+                        <div class="flex items-center justify-between p-4 rounded-xl bg-white/5 hover:bg-white/10 transition-colors group">
+                            <div class="flex items-center gap-4">
+                                <div class="p-3 rounded-full bg-green-500/20 text-green-400 group-hover:scale-110 transition-transform">
+                                    <i data-lucide="shopping-bag" class="w-5 h-5"></i>
+                                </div>
+                                <div>
+                                    <div class="font-bold text-sm">Whole Foods Market</div>
+                                    <div class="text-xs text-slate-500">Groceries • Mixed Basket</div>
+                                </div>
+                            </div>
+                            <div class="text-right">
+                                <div class="font-bold text-sm text-green-400">14.2 kg CO₂e</div>
+                                <div class="text-xs text-slate-500">-$156.20</div>
+                            </div>
+                        </div>
+                        
+                         <!-- Transaction 4: Digital (Low Impact) -->
+                         <div class="flex items-center justify-between p-4 rounded-xl bg-white/5 hover:bg-white/10 transition-colors group">
+                            <div class="flex items-center gap-4">
+                                <div class="p-3 rounded-full bg-purple-500/20 text-purple-400 group-hover:scale-110 transition-transform">
+                                    <i data-lucide="music" class="w-5 h-5"></i>
+                                </div>
+                                <div>
+                                    <div class="font-bold text-sm">Spotify Premium</div>
+                                    <div class="text-xs text-slate-500">Digital Services</div>
+                                </div>
+                            </div>
+                            <div class="text-right">
+                                <div class="font-bold text-sm text-slate-400">0.05 kg CO₂e</div>
+                                <div class="text-xs text-slate-500">-$9.99</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right: Insights & Stats -->
+                <div class="lg:col-span-5 space-y-6">
+                    
+                    <!-- Monthly Summary Card -->
+                    <div class="glass-panel rounded-3xl p-6 md:p-8">
+                        <div class="flex justify-between items-start mb-4">
+                            <h3 class="text-lg font-bold">Monthly Footprint</h3>
+                            <div class="px-2 py-1 rounded bg-yellow-500/10 text-yellow-400 text-[10px] font-bold uppercase tracking-widest border border-yellow-500/20">High Impact</div>
+                        </div>
+                        
+                        <div class="flex items-end gap-2 mb-2">
+                            <span class="text-5xl font-black text-white">542</span>
+                            <span class="text-sm font-bold text-slate-400 mb-1">kg CO₂e</span>
+                        </div>
+                        
+                        <div class="w-full h-2 bg-slate-800 rounded-full overflow-hidden mb-2">
+                            <div class="h-full bg-gradient-to-r from-green-400 via-yellow-400 to-red-500 w-[75%]"></div>
+                        </div>
+                        
+                        <div class="flex justify-between text-[10px] text-slate-500 uppercase tracking-wider font-bold mt-1">
+                            <span>0 kg</span>
+                            <span>Target: 400 kg</span>
+                        </div>
+                    </div>
+
+                    <!-- AI Insight Card -->
+                     <div class="glass-panel rounded-3xl p-6 md:p-8 relative overflow-hidden transition-colors hover:bg-purple-900/10">
+                        <div class="absolute top-0 right-0 p-4 opacity-20">
+                            <i data-lucide="sparkles" class="w-12 h-12 text-purple-400"></i>
+                        </div>
+                        <h3 class="text-lg font-bold mb-3 text-purple-400 flex items-center gap-2">
+                             <i data-lucide="zap" class="w-4 h-4"></i>
+                            AI Insight
+                        </h3>
+                        <p class="text-sm text-slate-300 leading-relaxed mb-6">
+                            "Your carbon footprint from air travel is <strong class="text-white">40% higher</strong> than the average user. Based on your location, rail alternatives for your next trip to Boston could save <strong class="text-green-400">85 kg CO₂e</strong>."
+                        </p>
+                        
+                        <div class="flex gap-3">
+                            <button class="flex-1 py-3 rounded-xl bg-purple-600/20 border border-purple-500/30 text-purple-300 text-[10px] font-bold uppercase tracking-widest hover:bg-purple-600/30 transition-all">
+                                Offset Now (+$12.50)
+                            </button>
+                             <button class="px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white hover:bg-white/10 transition-all">
+                                <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Dataset Attribution / Info -->
+            <div class="mt-8 text-center opacity-40">
+                <p class="text-[10px] uppercase tracking-widest">Calculations based on EPA & DEFRA Carbon Emission Factors 2024</p>
+            </div>
         </div>
 
         <!-- Footer / Credits -->
