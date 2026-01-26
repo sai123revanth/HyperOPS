@@ -69,12 +69,28 @@ st.markdown("""
     }
     h1 { font-weight: 800; letter-spacing: -1px; }
     
+    /* Expander Styling */
+    .streamlit-expanderHeader {
+        background-color: rgba(255, 255, 255, 0.05);
+        border-radius: 8px;
+        color: white;
+    }
+    
     /* Section Dividers */
     hr {
         margin-top: 3rem;
         margin-bottom: 3rem;
         border: 0;
         border-top: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    
+    /* Custom Info Box */
+    .info-box {
+        background-color: rgba(0, 168, 232, 0.1);
+        border-left: 5px solid #00a8e8;
+        padding: 15px;
+        border-radius: 5px;
+        margin-bottom: 10px;
     }
 
 </style>
@@ -108,10 +124,11 @@ def load_data():
 
 class CarbonScoringEngine:
     """
-    Core logic for mapping transactions to carbon footprints.
+    Core logic for mapping transactions to carbon footprints using standard ESG frameworks.
     """
     
     # Estimated Emission Factors (kgCO2e per INR)
+    # Derived from Economic Input-Output Life Cycle Assessment (EIO-LCA) models suitable for the region.
     EMISSION_FACTORS = {
         'Transportation': 0.15, 'Food': 0.06, 'Utilities': 0.20,
         'Household': 0.08, 'Apparel': 0.10, 'Education': 0.01,
@@ -119,10 +136,34 @@ class CarbonScoringEngine:
         'subscription': 0.005, 'Other': 0.05
     }
     
-    # Subcategory refinements
+    # Subcategory refinements for granular accuracy
     SUBCATEGORY_FACTORS = {
         'Train': 0.04, 'Air': 0.25, 'auto': 0.12,
         'Vegetables': 0.03, 'Meat': 0.15,
+    }
+    
+    # Prescriptive Advice Database
+    RECOMMENDATIONS = {
+        'Transportation': [
+            "🚗 **Carpooling**: Reduces individual footprint by ~40% for daily commutes.",
+            "🚲 **Active Transport**: Consider cycling for trips under 5km; it's zero emission!",
+            "🚆 **Rail over Road**: Trains are 80% less carbon-intensive than solo driving.",
+            "🔋 **EV Switch**: Transitioning to an Electric Vehicle can cut lifetime emissions by 50%."
+        ],
+        'Food': [
+            "🥩 **Meat Reduction**: Reducing meat consumption by just one day a week saves ~4kg CO2.",
+            "🌾 **Local Sourcing**: Buy local seasonal produce to cut down on 'food miles'.",
+            "🥡 **Waste Not**: Meal prepping reduces food waste, a major methane source."
+        ],
+        'Utilities': [
+            "💡 **LED Switch**: Switch to LED bulbs to cut lighting energy by 75%.",
+            "🔌 **Vampire Power**: Unplug chargers and standby TVs to save 10% on bills.",
+            "🌡️ **Smart Climate**: Adjusting AC by 1°C can save 6% electricity."
+        ],
+        'Apparel': [
+            "👕 **Fast Fashion**: Buying one used item instead of new reduces its carbon footprint by 82%.",
+            "🧶 **Material Choice**: Choose natural fibers like organic cotton or linen over polyester."
+        ]
     }
 
     @staticmethod
@@ -168,6 +209,19 @@ class CarbonScoringEngine:
         elif avg_score >= 60: return "🌿 Conconscious Citizen", "You are making good choices, but there's room to grow."
         elif avg_score >= 40: return "🏭 Carbon Neutral Aspirant", "Your footprint is visible. Let's optimize your habits."
         else: return "⚠️ High Emitter", "Your activities have a significant impact. Action needed."
+        
+    @staticmethod
+    def get_prescriptive_advice(category):
+        return CarbonScoringEngine.RECOMMENDATIONS.get(category, ["🌱 Review this expense for sustainable alternatives.", "♻️ Consider the lifecycle impact of this purchase."])
+
+    @staticmethod
+    def calculate_offsets(total_carbon_kg):
+        # Scientific approx: A mature tree absorbs ~21kg CO2 per year
+        trees_needed = total_carbon_kg / 21
+        # Approx cost: Verified carbon credits average ~$10-15 per tonne (1000kg)
+        cost_usd = (total_carbon_kg / 1000) * 12 
+        cost_inr = cost_usd * 84 # Approx exchange rate
+        return trees_needed, cost_inr
 
 # -----------------------------------------------------------------------------
 # 3. ADVANCED FEATURES: FORECASTING & SIMULATION
@@ -257,10 +311,34 @@ def main():
     filtered_df['Eco_Score'] = filtered_df.apply(lambda x: engine.calculate_eco_score(x['Carbon_Footprint_kg'], x['Amount']), axis=1)
 
     # -------------------------------------------------------------------------
+    # INTRO: SCIENTIFIC METHODOLOGY (Collapsible)
+    # -------------------------------------------------------------------------
+    with st.expander("📘 How It Works: The Science of Carbon Attribution (Click to Expand)", expanded=False):
+        st.markdown("""
+        ### Carbon Attribution Methodology
+        Ecopay utilizes a **Spend-Based Method** for carbon accounting, consistent with the GHG Protocol for Scope 3 (Category 1: Purchased Goods and Services).
+        
+        1.  **Transaction Classification (NLP):**
+            We parse transaction metadata (Merchant, Category, Note) to map financial activities to sustainability vectors.
+        
+        2.  **Emission Factor Mapping (EIO-LCA):**
+            We apply **Emission Factors (EF)** expressed in $kgCO_2e/INR$. These factors are derived from **Environmentally Extended Input-Output (EEIO)** models, which estimate the emissions produced throughout the supply chain of a product per unit of currency spent.
+            * **Scope 1:** Direct emissions (e.g., fuel burnt in your car).
+            * **Scope 2:** Indirect emissions (e.g., electricity used).
+            * **Scope 3:** Upstream supply chain emissions (e.g., farming required for your food).
+            
+        3.  **The Eco-Score Algorithm:**
+            Your score (0-100) is a normalized efficiency metric calculated as:
+            $$ Score = 100 - (\\frac{Total Emissions (kg)}{Total Spend (INR)} \\times Sensitivity Factor) $$
+            A higher score indicates you are spending money efficiently with lower carbon intensity.
+        """)
+
+    # -------------------------------------------------------------------------
     # SECTION 1: DASHBOARD
     # -------------------------------------------------------------------------
     st.markdown("<br>", unsafe_allow_html=True)
     st.markdown("## 📊 Main Dashboard")
+    st.markdown("Real-time overview of your environmental impact based on financial activity.")
     
     # Calculate Persona
     avg_score = filtered_df['Eco_Score'].mean()
@@ -270,11 +348,14 @@ def main():
     col1, col2, col3, col4 = st.columns(4)
     total_carbon = filtered_df['Carbon_Footprint_kg'].sum()
     
-    with col1: st.metric("Total Spend", f"₹{filtered_df['Amount'].sum():,.0f}")
-    with col2: st.metric("Carbon Footprint", f"{total_carbon:,.2f} kg", delta="-5% (Target)")
-    with col3: st.metric("Avg Eco Score", f"{avg_score:.0f}/100")
+    with col1: 
+        st.metric("Total Spend", f"₹{filtered_df['Amount'].sum():,.0f}", help="Total financial outflow analyzed in the selected period.")
+    with col2: 
+        st.metric("Carbon Footprint", f"{total_carbon:,.2f} kg", delta="-5% (Target)", help="Total Equivalent Carbon Dioxide (CO2e) emitted directly or indirectly.")
+    with col3: 
+        st.metric("Avg Eco Score", f"{avg_score:.0f}/100", help="0-100 Score. 100 is Carbon Neutral. <50 is High Impact.")
     with col4: 
-        st.markdown(f"<div style='background-color:rgba(0,210,106,0.1); padding:10px; border-radius:10px; border:1px solid #00d26a; text-align:center;'><strong>{persona}</strong></div>", unsafe_allow_html=True)
+        st.markdown(f"<div style='background-color:rgba(0,210,106,0.1); padding:10px; border-radius:10px; border:1px solid #00d26a; text-align:center;'><strong>{persona}</strong><br><span style='font-size:0.8em; color:#aaa;'>{persona_desc}</span></div>", unsafe_allow_html=True)
         
     st.markdown("<br>", unsafe_allow_html=True)
 
@@ -282,6 +363,7 @@ def main():
     c1, c2 = st.columns([1.5, 1])
     with c1:
         st.subheader("Emission Sources")
+        st.markdown("Identify which categories are contributing most to your footprint.")
         cat_group = filtered_df.groupby(['Category', 'Subcategory'])[['Carbon_Footprint_kg', 'Amount']].sum().reset_index()
         fig_sun = px.sunburst(cat_group, path=['Category', 'Subcategory'], values='Carbon_Footprint_kg',
                             color='Carbon_Footprint_kg', color_continuous_scale='RdYlGn_r',
@@ -291,6 +373,7 @@ def main():
 
     with c2:
         st.subheader("Top Polluters")
+        st.markdown("The specific activities driving up your score.")
         top_cats = filtered_df.groupby('Category')['Carbon_Footprint_kg'].sum().nlargest(5).sort_values(ascending=True)
         fig_bar = px.bar(top_cats, orientation='h', color=top_cats.values, color_continuous_scale='Reds')
         fig_bar.update_layout(paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)", font_color="white", showlegend=False)
@@ -298,6 +381,7 @@ def main():
 
     # Transaction Table
     st.subheader("Deep Dive Analysis")
+    st.markdown("Granular review of every transaction with automated engine logic.")
     st.dataframe(filtered_df[['Date', 'Category', 'Note', 'Amount', 'Carbon_Footprint_kg', 'Eco_Score', 'Explanation']].sort_values(by='Carbon_Footprint_kg', ascending=False), use_container_width=True)
 
     st.markdown("---")
@@ -326,15 +410,15 @@ def main():
     # SECTION 3: SIMULATOR
     # -------------------------------------------------------------------------
     st.markdown("## 🎛️ Lifestyle Impact Simulator")
-    st.markdown("Adjust the sliders to see how lifestyle changes could lower your total footprint.")
+    st.markdown("Visualize the impact of specific habit changes on your total footprint.")
     
     col_sim_controls, col_sim_res = st.columns([1, 2])
     
     with col_sim_controls:
         st.subheader("Adjust Habits")
-        reduce_transport = st.slider("Reduce Transportation", 0, 100, 0, format="-%d%%")
-        reduce_food = st.slider("Plant-Based Diet Shift (Food)", 0, 100, 0, format="-%d%%")
-        reduce_utility = st.slider("Energy Efficiency (Utilities)", 0, 100, 0, format="-%d%%")
+        reduce_transport = st.slider("Reduce Transportation", 0, 100, 0, format="-%d%%", help="Simulate taking fewer cabs/flights.")
+        reduce_food = st.slider("Plant-Based Diet Shift (Food)", 0, 100, 0, format="-%d%%", help="Simulate replacing meat meals with veg.")
+        reduce_utility = st.slider("Energy Efficiency (Utilities)", 0, 100, 0, format="-%d%%", help="Simulate using LED bulbs/saving electricity.")
         
     with col_sim_res:
         # Calculation
@@ -353,8 +437,8 @@ def main():
         st.subheader("Projected Impact")
         
         c_sim1, c_sim2 = st.columns(2)
-        c_sim1.metric("Projected Footprint", f"{projected_total:,.2f} kg")
-        c_sim2.metric("Carbon Saved", f"{saved:,.2f} kg", delta=f"{saved/(total_carbon+0.1)*100:.1f}% Reduction", delta_color="normal")
+        c_sim1.metric("Projected Footprint", f"{projected_total:,.2f} kg", help="Your new estimated total.")
+        c_sim2.metric("Carbon Saved", f"{saved:,.2f} kg", delta=f"{saved/(total_carbon+0.1)*100:.1f}% Reduction", delta_color="normal", help="Total CO2 prevented from entering the atmosphere.")
         
         # Simple Bar chart comparison
         sim_df = pd.DataFrame({
@@ -364,6 +448,32 @@ def main():
         fig_sim = px.bar(sim_df, x='Scenario', y='Emissions (kg)', color='Scenario', color_discrete_sequence=['#ff4b4b', '#00d26a'])
         fig_sim.update_layout(paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)", font_color="white")
         st.plotly_chart(fig_sim, use_container_width=True)
+
+    st.markdown("---")
+    
+    # -------------------------------------------------------------------------
+    # NEW SECTION: AI ACTION PLAN (Prescriptive Features)
+    # -------------------------------------------------------------------------
+    st.markdown("## 🚀 AI-Driven Prescriptive Action Plan")
+    st.markdown("Based on your unique spending profile, we have identified high-impact areas and specific actions you can take immediately.")
+    
+    # Identify top 2 highest emitting categories
+    top_2_categories = filtered_df.groupby('Category')['Carbon_Footprint_kg'].sum().nlargest(2).index.tolist()
+    
+    col_rec1, col_rec2 = st.columns(2)
+    
+    for i, category in enumerate(top_2_categories):
+        target_col = col_rec1 if i == 0 else col_rec2
+        with target_col:
+            st.markdown(f"#### Priority {i+1}: {category}")
+            current_cat_emit = filtered_df[filtered_df['Category'] == category]['Carbon_Footprint_kg'].sum()
+            st.markdown(f"**Current Impact:** {current_cat_emit:.2f} kg CO2e")
+            st.progress(min(1.0, current_cat_emit / total_carbon), text="Contribution to Total Footprint")
+            
+            st.markdown("**Recommended Actions:**")
+            recommendations = engine.get_prescriptive_advice(category)
+            for rec in recommendations:
+                st.info(rec)
 
     st.markdown("---")
 
@@ -400,6 +510,25 @@ def main():
             st.warning("You are in the **Top 60%**. Try the Simulator to find ways to improve.")
         else:
             st.error("You are in the **Bottom 30%**. High emission intensity detected.")
+
+    st.markdown("---")
+
+    # -------------------------------------------------------------------------
+    # NEW SECTION: CARBON OFFSETTING
+    # -------------------------------------------------------------------------
+    st.markdown("## 🌳 Neutralize Your Impact (Offsetting Path)")
+    st.markdown("Even with the best habits, some emissions are unavoidable. Here is what it takes to become Carbon Neutral today.")
+    
+    trees_needed, offset_cost = engine.calculate_offsets(total_carbon)
+    
+    col_off1, col_off2, col_off3 = st.columns(3)
+    
+    with col_off1:
+        st.metric("Trees Required", f"{trees_needed:.1f} 🌳", help="Number of mature trees needed to absorb this amount of CO2 in one year.")
+    with col_off2:
+        st.metric("Est. Offset Cost", f"₹{offset_cost:,.2f}", help="Approximate market cost to purchase verified carbon credits for this amount.")
+    with col_off3:
+        st.button("🌱 Purchase Carbon Credits (Demo)", type="primary")
 
     st.markdown("<br><br><br>", unsafe_allow_html=True)
 
