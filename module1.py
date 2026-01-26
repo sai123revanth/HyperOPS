@@ -24,19 +24,38 @@ st.markdown("""
         color: #fafafa;
     }
     
-    /* Metrics Styling */
-    div[data-testid="stMetricValue"] {
-        font-size: 2.5rem;
-        color: #00d26a; /* Eco Green */
-        font-weight: 700;
+    /* Modern Gradient Metrics Cards (The "Credit" Section) */
+    div[data-testid="stMetric"] {
+        background: linear-gradient(135deg, #111827 0%, #064e3b 100%);
+        border: 1px solid #1f2937;
+        border-left: 4px solid #00d26a; /* Bright green accent */
+        padding: 20px;
+        border-radius: 12px;
+        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3);
+        transition: all 0.3s ease;
     }
     
-    /* Card/Container Styling */
-    .css-1r6slb0 {
-        border: 1px solid #2b313e;
-        border-radius: 10px;
-        padding: 20px;
-        background-color: #1f2937;
+    div[data-testid="stMetric"]:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 20px 25px -5px rgba(0, 210, 106, 0.15);
+        border-color: #34d399;
+    }
+
+    /* Metric Values */
+    div[data-testid="stMetricValue"] {
+        font-size: 2.2rem;
+        color: #ffffff; 
+        font-weight: 700;
+        text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+    }
+    
+    /* Metric Labels */
+    div[data-testid="stMetricLabel"] {
+        color: #9ca3af;
+        font-size: 0.9rem;
+        font-weight: 500;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
     }
     
     /* Headers */
@@ -46,10 +65,14 @@ st.markdown("""
     }
     h1 { font-weight: 800; letter-spacing: -1px; }
     
-    /* Custom Badge for Scores */
-    .score-badge-high { background-color: #ff4b4b; color: white; padding: 4px 8px; border-radius: 4px; font-weight: bold; }
-    .score-badge-med { background-color: #ffa500; color: white; padding: 4px 8px; border-radius: 4px; font-weight: bold; }
-    .score-badge-low { background-color: #00d26a; color: white; padding: 4px 8px; border-radius: 4px; font-weight: bold; }
+    /* Navigation/Controls Container */
+    .nav-container {
+        background-color: #1f2937;
+        padding: 1.5rem;
+        border-radius: 10px;
+        margin-bottom: 2rem;
+        border: 1px solid #374151;
+    }
 
 </style>
 """, unsafe_allow_html=True)
@@ -229,7 +252,11 @@ def main():
         lambda x: engine.calculate_eco_score(x['Carbon_Footprint_kg'], x['Amount']), axis=1
     )
 
-    # 1. TOP LEVEL METRICS
+    # 1. TOP LEVEL METRICS (CREDIT SECTION)
+    
+    # Add Space
+    st.markdown("<br>", unsafe_allow_html=True)
+    
     col1, col2, col3, col4 = st.columns(4)
     
     total_spend = filtered_df['Amount'].sum()
@@ -246,7 +273,8 @@ def main():
     with col4:
         st.metric("Avg Eco Score", f"{avg_score:.0f}/100", delta=f"{avg_score-50:.0f} pts")
 
-    st.markdown("---")
+    # Add Space
+    st.markdown("<br><br>", unsafe_allow_html=True)
 
     # 2. VISUALIZATION ROW
     c1, c2 = st.columns([1.5, 1])
