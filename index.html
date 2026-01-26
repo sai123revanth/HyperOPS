@@ -178,6 +178,11 @@
             transform: scale(1.02);
             box-shadow: 0 0 20px rgba(59, 130, 246, 0.4);
         }
+        
+        /* Ensure background isn't clicked */
+        .bg-fixed-container {
+            pointer-events: none;
+        }
     </style>
 </head>
 <body>
@@ -221,7 +226,7 @@
 
             <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
                 
-                <!-- Left: LIVE SIMULATOR (Connected to Python) -->
+                <!-- Left: LIVE SIMULATOR -->
                 <div class="lg:col-span-5 glass-panel rounded-3xl p-6 md:p-8 border-beam flex flex-col gap-6">
                     <div class="flex items-center gap-2 mb-2">
                         <div class="p-2 rounded-lg bg-blue-500/20 text-blue-400">
@@ -328,35 +333,22 @@
     <script>
         lucide.createIcons();
 
-        // --- ANIMATIONS ---
-        const auras = document.querySelectorAll('.aura');
-        window.addEventListener('mousemove', (e) => {
-            const x = (e.clientX / window.innerWidth - 0.5) * 30;
-            const y = (e.clientY / window.innerHeight - 0.5) * 30;
-            auras.forEach((aura, index) => {
-                const speed = (index + 1) * 0.3;
-                aura.style.transform = `translate(${x * speed}px, ${y * speed}px)`;
-            });
-        });
-
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) entry.target.classList.add('active');
-            });
-        }, { threshold: 0.1 });
-        document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+        // ----------------------------------------------------
+        // 1. BACKEND URL SETUP (VERCEL INTEGRATED)
+        // ----------------------------------------------------
+        // This is crucial. It uses a relative path so Vercel 
+        // automatically routes it to your Python backend in /api
+        const BACKEND_URL = "/api/calculate"; 
 
 
-        // --- PYTHON BACKEND CONNECTION ---
+        // ----------------------------------------------------
+        // 2. PYTHON BACKEND CONNECTION (CALCULATOR)
+        // ----------------------------------------------------
         const form = document.getElementById('calcForm');
         const resultArea = document.getElementById('resultArea');
         const resultVal = document.getElementById('resultVal');
         const resultMsg = document.getElementById('resultMsg');
         const resultTag = document.getElementById('resultTag');
-
-        // IMPORTANT: Change this URL to your live Render/Heroku URL when deployed
-        // For local testing, use: http://127.0.0.1:5000/calculate
-        const BACKEND_URL = "http://127.0.0.1:5000/calculate";
 
         form.addEventListener('submit', async (e) => {
             e.preventDefault();
@@ -375,7 +367,7 @@
             };
 
             try {
-                // Fetch from Python
+                // The Fetch Call to Vercel Python Backend
                 const response = await fetch(BACKEND_URL, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
@@ -390,7 +382,6 @@
                 resultVal.innerText = result.co2;
                 resultMsg.innerText = result.insight;
                 
-                // Color coding based on impact
                 if(result.co2 > 50) {
                     resultTag.className = "text-[10px] font-bold uppercase px-2 py-1 rounded bg-red-500/20 text-red-400";
                     resultTag.innerText = "High Impact";
@@ -402,11 +393,29 @@
             } catch (error) {
                 console.error(error);
                 resultVal.innerText = "ERR";
-                resultMsg.innerText = "Could not connect to Python Backend. Ensure Flask is running.";
+                resultMsg.innerText = "Connection Failed. Ensure the Python backend is deployed to Vercel.";
                 resultTag.className = "text-[10px] font-bold uppercase px-2 py-1 rounded bg-red-500/20 text-red-400";
                 resultTag.innerText = "Offline";
             }
         });
+
+        // Animations
+        const auras = document.querySelectorAll('.aura');
+        window.addEventListener('mousemove', (e) => {
+            const x = (e.clientX / window.innerWidth - 0.5) * 30;
+            const y = (e.clientY / window.innerHeight - 0.5) * 30;
+            auras.forEach((aura, index) => {
+                const speed = (index + 1) * 0.3;
+                aura.style.transform = `translate(${x * speed}px, ${y * speed}px)`;
+            });
+        });
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) entry.target.classList.add('active');
+            });
+        }, { threshold: 0.1 });
+        document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
     </script>
 </body>
 </html>
