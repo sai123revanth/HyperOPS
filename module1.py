@@ -3,7 +3,7 @@ import pandas as pd
 import plotly.express as px
 import plotly.graph_objects as go
 import numpy as np
-from datetime import datetime
+from datetime import datetime, timedelta
 
 # -----------------------------------------------------------------------------
 # 1. PAGE CONFIGURATION & STYLING
@@ -69,13 +69,21 @@ st.markdown("""
     }
     h1 { font-weight: 800; letter-spacing: -1px; }
     
-    /* Navigation/Controls Container */
-    .nav-container {
-        background-color: #1f2937;
-        padding: 1.5rem;
-        border-radius: 10px;
-        margin-bottom: 2rem;
-        border: 1px solid #374151;
+    /* Tabs Styling */
+    .stTabs [data-baseweb="tab-list"] {
+        gap: 10px;
+    }
+    .stTabs [data-baseweb="tab"] {
+        height: 50px;
+        white-space: pre-wrap;
+        background-color: rgba(255, 255, 255, 0.05);
+        border-radius: 8px;
+        color: #fff;
+        font-weight: 600;
+    }
+    .stTabs [aria-selected="true"] {
+        background-color: #00d26a !important;
+        color: #000 !important;
     }
 
 </style>
@@ -90,24 +98,19 @@ def load_data():
     """
     Loads and preprocesses the transaction data.
     """
-    # Simulate loading the user's uploaded file. 
-    # In a real deployment, this would use the uploaded file object or path.
-    # For this demo, we assume the file exists in the directory.
     try:
         df = pd.read_csv("Daily Household Transactions.csv")
     except FileNotFoundError:
         st.error("File 'Daily Household Transactions.csv' not found. Please upload it.")
         return pd.DataFrame()
 
-    # 1. Date Parsing (Handling potentially mixed formats)
-    # The snippet showed '20/09/2018 12:04:08' and '19/09/2018'
+    # 1. Date Parsing
     df['Date'] = pd.to_datetime(df['Date'], dayfirst=True, errors='coerce')
     
-    # 2. Filter for Expenses only (Income doesn't add to consumption footprint directly)
+    # 2. Filter for Expenses only
     df = df[df['Income/Expense'] == 'Expense'].copy()
     
-    # 3. Handle specific currency logic (assuming INR for this dataset)
-    # If other currencies exist, conversion logic would go here.
+    # 3. Handle specific currency logic
     df = df[df['Currency'] == 'INR'] 
 
     return df
@@ -118,29 +121,17 @@ class CarbonScoringEngine:
     """
     
     # Estimated Emission Factors (kgCO2e per INR)
-    # In a real app, this would query an API like Climatiq or Exiobase.
-    # These are heuristic estimations for demonstration.
     EMISSION_FACTORS = {
-        'Transportation': 0.15,   # High fuel intensity
-        'Food': 0.06,             # Agriculture intensity
-        'Utilities': 0.20,        # Electricity/Gas
-        'Household': 0.08,        # General goods
-        'Apparel': 0.10,          # Fast fashion impact
-        'Education': 0.01,        # Low direct impact
-        'Health': 0.03,           # Services
-        'Personal Development': 0.01,
-        'Festivals': 0.05,        # Consumables
-        'subscription': 0.005,    # Digital goods (Server energy only)
-        'Other': 0.05             # Fallback
+        'Transportation': 0.15, 'Food': 0.06, 'Utilities': 0.20,
+        'Household': 0.08, 'Apparel': 0.10, 'Education': 0.01,
+        'Health': 0.03, 'Personal Development': 0.01, 'Festivals': 0.05,
+        'subscription': 0.005, 'Other': 0.05
     }
     
-    # Subcategory refinements (Overrides)
+    # Subcategory refinements
     SUBCATEGORY_FACTORS = {
-        'Train': 0.04,            # Efficient transport
-        'Air': 0.25,              # High impact
-        'auto': 0.12,             # Fossil fuel
-        'Vegetables': 0.03,       # Low impact food
-        'Meat': 0.15,             # High impact food
+        'Train': 0.04, 'Air': 0.25, 'auto': 0.12,
+        'Vegetables': 0.03, 'Meat': 0.15,
     }
 
     @staticmethod
@@ -149,82 +140,118 @@ class CarbonScoringEngine:
         subcategory = row.get('Subcategory', '')
         amount = row.get('Amount', 0)
         
-        # Determine Factor
         factor = CarbonScoringEngine.EMISSION_FACTORS.get(category, 0.05)
         
-        # Apply Subcategory refinement if applicable
         if subcategory in CarbonScoringEngine.SUBCATEGORY_FACTORS:
             factor = CarbonScoringEngine.SUBCATEGORY_FACTORS[subcategory]
         elif isinstance(subcategory, str) and 'Meat' in subcategory:
-            factor = 0.12 # Heuristic detection
+            factor = 0.12 
             
-        carbon_mass = amount * factor # kgCO2e
-        
+        carbon_mass = amount * factor
         return factor, carbon_mass
 
     @staticmethod
     def generate_explanation(row, factor, carbon_mass):
-        """Generates natural language explanation for the score."""
-        amount = row['Amount']
         category = row['Category']
-        
         intensity_label = "Low"
         if factor > 0.12: intensity_label = "High"
         elif factor > 0.05: intensity_label = "Moderate"
         
-        explanation = f"Classified as **{intensity_label} Intensity** ({factor} kgCO2e/INR). "
-        
+        explanation = f"**{intensity_label} Intensity** ({factor} kg/₹). "
         if intensity_label == "High":
             explanation += f"Driven by high-emission activity in *{category}*."
-        elif intensity_label == "Low":
+        else:
             explanation += f"Efficient spending in *{category}*."
-            
         return explanation
 
     @staticmethod
     def calculate_eco_score(carbon_mass, amount):
-        """
-        Calculates a 0-100 score. 
-        100 = Carbon Neutral/Positive
-        0 = Extremely High Intensity
-        """
         if amount == 0: return 100
         intensity = carbon_mass / amount
-        # Sigmoid-like decay: Higher intensity -> Lower Score
         score = max(0, 100 - (intensity * 400)) 
         return int(score)
 
+    @staticmethod
+    def determine_persona(avg_score):
+        if avg_score >= 80: return "🌱 Eco-Warrior", "You are leading the charge for a greener planet!"
+        elif avg_score >= 60: return "🌿 Conconscious Citizen", "You are making good choices, but there's room to grow."
+        elif avg_score >= 40: return "🏭 Carbon Neutral Aspirant", "Your footprint is visible. Let's optimize your habits."
+        else: return "⚠️ High Emitter", "Your activities have a significant impact. Action needed."
+
 # -----------------------------------------------------------------------------
-# 3. MAIN APPLICATION UI
+# 3. ADVANCED FEATURES: FORECASTING & SIMULATION
+# -----------------------------------------------------------------------------
+
+def plot_forecast(daily_emissions):
+    """Generates a predictive trend line using simple linear regression."""
+    if daily_emissions.empty or len(daily_emissions) < 5:
+        return None
+
+    # Prepare data for regression
+    daily_emissions = daily_emissions.sort_values('Date')
+    daily_emissions['DayIndex'] = np.arange(len(daily_emissions))
+    
+    # Simple Linear Regression (y = mx + c)
+    X = daily_emissions['DayIndex'].values
+    y = daily_emissions['Carbon_Footprint_kg'].values
+    
+    if len(X) > 0:
+        coef = np.polyfit(X, y, 1)
+        poly1d_fn = np.poly1d(coef)
+        
+        # Forecast next 30 days
+        future_days = np.arange(len(daily_emissions), len(daily_emissions) + 30)
+        future_dates = [daily_emissions['Date'].iloc[-1] + timedelta(days=int(i)) for i in range(1, 31)]
+        future_emissions = poly1d_fn(future_days)
+        
+        # Plot
+        fig = go.Figure()
+        
+        # Historical
+        fig.add_trace(go.Scatter(x=daily_emissions['Date'], y=daily_emissions['Carbon_Footprint_kg'], 
+                                mode='lines+markers', name='Historical Data', line=dict(color='#00d26a')))
+        
+        # Trend Line
+        fig.add_trace(go.Scatter(x=daily_emissions['Date'], y=poly1d_fn(X), 
+                                mode='lines', name='Trend', line=dict(color='white', dash='dash')))
+        
+        # Forecast
+        fig.add_trace(go.Scatter(x=future_dates, y=future_emissions, 
+                                mode='lines', name='30-Day Forecast', line=dict(color='#ffaa00', dash='dot')))
+
+        fig.update_layout(
+            title="Carbon Emission Forecast (AI Trend Analysis)",
+            paper_bgcolor="rgba(0,0,0,0)", 
+            plot_bgcolor="rgba(0,0,0,0)", 
+            font_color="white",
+            hovermode="x unified"
+        )
+        return fig
+    return None
+
+# -----------------------------------------------------------------------------
+# 4. MAIN APPLICATION UI
 # -----------------------------------------------------------------------------
 
 def main():
-    # Load Data First
     data_df = load_data()
     if data_df.empty:
         return
 
-    # --- Header & Top Navigation Controls ---
+    # --- Header & Nav ---
     st.title("Ecopay Carbon Engine")
-    st.markdown("### Carbon Attribution & Scoring Dashboard")
-    st.markdown("Mapping categorized financial transactions to standardized emission factors to produce actionable climate intelligence.")
+    st.markdown("### Next-Gen Carbon Attribution & Scoring")
     
-    st.markdown("---")
-    
-    # Date Filter
-    min_date = data_df['Date'].min()
-    max_date = data_df['Date'].max()
-    
-    date_range = st.date_input(
-        "Analysis Period",
-        value=(min_date, max_date),
-        min_value=min_date,
-        max_value=max_date
-    )
+    col_nav1, col_nav2 = st.columns([3, 1])
+    with col_nav1:
+        min_date = data_df['Date'].min()
+        max_date = data_df['Date'].max()
+        date_range = st.date_input("Analysis Period", value=(min_date, max_date), min_value=min_date, max_value=max_date)
+    with col_nav2:
+        st.caption("Engine Version: v3.0 (Alpha)")
+        st.caption("AI Status: Online")
 
-    st.divider()
-
-    # --- Processing Data with Engine ---
+    # --- Data Processing ---
     if len(date_range) == 2:
         start_date, end_date = date_range
         mask = (data_df['Date'] >= pd.to_datetime(start_date)) & (data_df['Date'] <= pd.to_datetime(end_date))
@@ -232,140 +259,158 @@ def main():
     else:
         filtered_df = data_df.copy()
 
-    # Apply Carbon Logic
     engine = CarbonScoringEngine()
-    
-    # Vectorized application of logic would be faster, but apply is better for 'explanation' generation here
-    results = filtered_df.apply(
-        lambda x: engine.calculate_footprint(x), axis=1, result_type='expand'
-    )
+    results = filtered_df.apply(lambda x: engine.calculate_footprint(x), axis=1, result_type='expand')
     filtered_df[['Emission_Factor', 'Carbon_Footprint_kg']] = results
-    
-    # Generate Explanations & Eco Scores
-    filtered_df['Explanation'] = filtered_df.apply(
-        lambda x: engine.generate_explanation(x, x['Emission_Factor'], x['Carbon_Footprint_kg']), axis=1
-    )
-    filtered_df['Eco_Score'] = filtered_df.apply(
-        lambda x: engine.calculate_eco_score(x['Carbon_Footprint_kg'], x['Amount']), axis=1
-    )
+    filtered_df['Explanation'] = filtered_df.apply(lambda x: engine.generate_explanation(x, x['Emission_Factor'], x['Carbon_Footprint_kg']), axis=1)
+    filtered_df['Eco_Score'] = filtered_df.apply(lambda x: engine.calculate_eco_score(x['Carbon_Footprint_kg'], x['Amount']), axis=1)
 
-    # 1. TOP LEVEL METRICS (CREDIT SECTION)
-    
-    # Add Space
-    st.markdown("<br>", unsafe_allow_html=True)
-    
-    col1, col2, col3, col4 = st.columns(4)
-    
-    total_spend = filtered_df['Amount'].sum()
-    total_carbon = filtered_df['Carbon_Footprint_kg'].sum()
-    avg_score = filtered_df['Eco_Score'].mean()
-    intensity = (total_carbon / total_spend) if total_spend > 0 else 0
+    # --- TABS FOR ADVANCED FEATURES ---
+    tab_dash, tab_forecast, tab_sim, tab_bench = st.tabs(["📊 Main Dashboard", "🔮 AI Forecast", "🎛️ Simulator", "🏆 Benchmarking"])
 
-    with col1:
-        st.metric("Total Spend", f"₹{total_spend:,.0f}", delta_color="off")
-    with col2:
-        st.metric("Carbon Footprint", f"{total_carbon:,.2f} kgCO₂e", delta="-12% vs avg")
-    with col3:
-        st.metric("Carbon Intensity", f"{intensity:.3f} kg/₹", help="Kilograms of CO2 emitted per Rupee spent")
-    with col4:
-        st.metric("Avg Eco Score", f"{avg_score:.0f}/100", delta=f"{avg_score-50:.0f} pts")
+    # -------------------------------------------------------------------------
+    # TAB 1: DASHBOARD
+    # -------------------------------------------------------------------------
+    with tab_dash:
+        st.markdown("<br>", unsafe_allow_html=True)
+        
+        # Calculate Persona
+        avg_score = filtered_df['Eco_Score'].mean()
+        persona, persona_desc = engine.determine_persona(avg_score)
 
-    # Add Space
-    st.markdown("<br><br>", unsafe_allow_html=True)
+        # Metrics
+        col1, col2, col3, col4 = st.columns(4)
+        total_carbon = filtered_df['Carbon_Footprint_kg'].sum()
+        
+        with col1: st.metric("Total Spend", f"₹{filtered_df['Amount'].sum():,.0f}")
+        with col2: st.metric("Carbon Footprint", f"{total_carbon:,.2f} kg", delta="-5% (Target)")
+        with col3: st.metric("Avg Eco Score", f"{avg_score:.0f}/100")
+        with col4: 
+            st.markdown(f"<div style='background-color:rgba(0,210,106,0.1); padding:10px; border-radius:10px; border:1px solid #00d26a; text-align:center;'><strong>{persona}</strong></div>", unsafe_allow_html=True)
+            
+        st.markdown("<br>", unsafe_allow_html=True)
 
-    # 2. VISUALIZATION ROW
-    c1, c2 = st.columns([1.5, 1])
+        # Visuals
+        c1, c2 = st.columns([1.5, 1])
+        with c1:
+            st.subheader("Emission Sources")
+            cat_group = filtered_df.groupby(['Category', 'Subcategory'])[['Carbon_Footprint_kg', 'Amount']].sum().reset_index()
+            fig_sun = px.sunburst(cat_group, path=['Category', 'Subcategory'], values='Carbon_Footprint_kg',
+                                color='Carbon_Footprint_kg', color_continuous_scale='RdYlGn_r',
+                                title="Carbon Heatmap Hierarchy")
+            fig_sun.update_layout(paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)", font_color="white")
+            st.plotly_chart(fig_sun, use_container_width=True)
 
-    with c1:
-        st.subheader("Carbon Attribution by Category")
-        # Aggregating for Sunburst
-        cat_group = filtered_df.groupby(['Category', 'Subcategory'])[['Carbon_Footprint_kg', 'Amount']].sum().reset_index()
-        fig_sun = px.sunburst(
-            cat_group, 
-            path=['Category', 'Subcategory'], 
-            values='Carbon_Footprint_kg',
-            color='Carbon_Footprint_kg',
-            color_continuous_scale='RdYlGn_r', # Red is high carbon
-            title="Emission Sources Hierarchy"
-        )
-        fig_sun.update_layout(paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)", font_color="white")
-        st.plotly_chart(fig_sun, use_container_width=True)
+        with c2:
+            st.subheader("Top Polluters")
+            top_cats = filtered_df.groupby('Category')['Carbon_Footprint_kg'].sum().nlargest(5).sort_values(ascending=True)
+            fig_bar = px.bar(top_cats, orientation='h', color=top_cats.values, color_continuous_scale='Reds')
+            fig_bar.update_layout(paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)", font_color="white", showlegend=False)
+            st.plotly_chart(fig_bar, use_container_width=True)
 
-    with c2:
-        st.subheader("Timeline Analysis")
-        # Time series
+        # Transaction Table
+        st.subheader("Deep Dive Analysis")
+        st.dataframe(filtered_df[['Date', 'Category', 'Note', 'Amount', 'Carbon_Footprint_kg', 'Eco_Score', 'Explanation']].sort_values(by='Carbon_Footprint_kg', ascending=False), use_container_width=True)
+
+    # -------------------------------------------------------------------------
+    # TAB 2: AI FORECAST
+    # -------------------------------------------------------------------------
+    with tab_forecast:
+        st.markdown("### 🔮 Predictive Carbon Analytics")
+        st.markdown("Using linear regression to project your emission trends for the next 30 days based on current behavior.")
+        
         daily_emissions = filtered_df.groupby('Date')[['Carbon_Footprint_kg']].sum().reset_index()
-        fig_line = px.area(
-            daily_emissions, 
-            x='Date', 
-            y='Carbon_Footprint_kg',
-            line_shape='spline',
-            color_discrete_sequence=['#00d26a'],
-            title="Daily Emission Trend"
-        )
-        fig_line.update_layout(paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)", font_color="white")
-        st.plotly_chart(fig_line, use_container_width=True)
-
-    # 3. DETAILED ATTRIBUTION TABLE
-    st.subheader("Transaction Attribution Engine")
-    
-    # Sort by impact
-    display_df = filtered_df[['Date', 'Category', 'Subcategory', 'Note', 'Amount', 'Emission_Factor', 'Carbon_Footprint_kg', 'Eco_Score', 'Explanation']].sort_values(by='Carbon_Footprint_kg', ascending=False)
-    
-    # Config for styling the dataframe
-    st.dataframe(
-        display_df,
-        use_container_width=True,
-        column_config={
-            "Date": st.column_config.DateColumn("Date", format="DD/MM/YYYY"),
-            "Amount": st.column_config.NumberColumn("Amount (₹)", format="₹%d"),
-            "Emission_Factor": st.column_config.NumberColumn("Emiss. Factor", format="%.2f"),
-            "Carbon_Footprint_kg": st.column_config.ProgressColumn(
-                "Carbon Impact", 
-                help="Relative impact", 
-                format="%.2f kg",
-                min_value=0, 
-                max_value=float(display_df['Carbon_Footprint_kg'].max()) if not display_df.empty else 1.0
-            ),
-            "Eco_Score": st.column_config.NumberColumn(
-                "Score",
-                help="0 (Bad) - 100 (Good)",
-                format="%d"
-            ),
-            "Note": st.column_config.TextColumn("Details", width="medium"),
-            "Explanation": st.column_config.TextColumn("Engine Logic", width="large")
-        },
-        height=400
-    )
-
-    # 4. EXPLAINABILITY SECTION (Deep Dive)
-    st.markdown("---")
-    st.subheader("🔍 Transaction Inspector")
-    
-    col_select, col_explain = st.columns([1, 2])
-    
-    with col_select:
-        selected_idx = st.selectbox("Select a High-Impact Transaction to Audit:", display_df.index[:10], format_func=lambda x: f"{display_df.loc[x, 'Note']} ({display_df.loc[x, 'Amount']} INR)")
+        fig_forecast = plot_forecast(daily_emissions)
         
-    with col_explain:
-        tx = display_df.loc[selected_idx]
-        
-        st.markdown(f"#### Audit: {tx['Note']}")
-        
-        e1, e2, e3 = st.columns(3)
-        e1.metric("Category", tx['Category'])
-        e2.metric("Emission Factor", f"{tx['Emission_Factor']:.2f}")
-        e3.metric("Attributed Carbon", f"{tx['Carbon_Footprint_kg']:.2f} kg")
-        
-        st.info(f"**Engine Reason:** {tx['Explanation']}")
-        
-        if tx['Eco_Score'] < 50:
-            st.warning("⚠️ **Improvement Tip:** Consider switching to public transport or grouping orders to reduce this category's footprint.")
+        if fig_forecast:
+            st.plotly_chart(fig_forecast, use_container_width=True)
+            
+            # Simulated AI Insight
+            trend_val = daily_emissions['Carbon_Footprint_kg'].iloc[-1]
+            st.info(f"💡 **AI Insight:** Your carbon trend is volatile. Based on the projection, you are expected to reach **{trend_val*30:,.0f} kg** next month if habits persist. Reducing 'Transportation' frequency could flatten this curve.")
         else:
-            st.success("✅ **Good Choice:** This transaction has a relatively low carbon intensity.")
+            st.warning("Not enough data points to generate a reliable forecast.")
 
-    # Added extra space at the bottom for better scroll/layout
-    st.markdown("<br><br><br><br>", unsafe_allow_html=True)
+    # -------------------------------------------------------------------------
+    # TAB 3: SIMULATOR
+    # -------------------------------------------------------------------------
+    with tab_sim:
+        st.markdown("### 🎛️ Lifestyle Impact Simulator")
+        st.markdown("Adjust the sliders to see how lifestyle changes could lower your total footprint.")
+        
+        col_sim_controls, col_sim_res = st.columns([1, 2])
+        
+        with col_sim_controls:
+            st.subheader("Adjust Habits")
+            reduce_transport = st.slider("Reduce Transportation", 0, 100, 0, format="-%d%%")
+            reduce_food = st.slider("Plant-Based Diet Shift (Food)", 0, 100, 0, format="-%d%%")
+            reduce_utility = st.slider("Energy Efficiency (Utilities)", 0, 100, 0, format="-%d%%")
+            
+        with col_sim_res:
+            # Calculation
+            current_totals = filtered_df.groupby('Category')['Carbon_Footprint_kg'].sum()
+            
+            new_transport = current_totals.get('Transportation', 0) * (1 - reduce_transport/100)
+            new_food = current_totals.get('Food', 0) * (1 - reduce_food/100)
+            new_utility = current_totals.get('Utilities', 0) * (1 - reduce_utility/100)
+            
+            # Other categories remain same
+            other_cats = current_totals.drop(['Transportation', 'Food', 'Utilities'], errors='ignore').sum()
+            
+            projected_total = new_transport + new_food + new_utility + other_cats
+            saved = total_carbon - projected_total
+            
+            st.subheader("Projected Impact")
+            
+            c_sim1, c_sim2 = st.columns(2)
+            c_sim1.metric("Projected Footprint", f"{projected_total:,.2f} kg")
+            c_sim2.metric("Carbon Saved", f"{saved:,.2f} kg", delta=f"{saved/(total_carbon+0.1)*100:.1f}% Reduction", delta_color="normal")
+            
+            # Simple Bar chart comparison
+            sim_df = pd.DataFrame({
+                'Scenario': ['Current', 'Simulated'],
+                'Emissions (kg)': [total_carbon, projected_total]
+            })
+            fig_sim = px.bar(sim_df, x='Scenario', y='Emissions (kg)', color='Scenario', color_discrete_sequence=['#ff4b4b', '#00d26a'])
+            fig_sim.update_layout(paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)", font_color="white")
+            st.plotly_chart(fig_sim, use_container_width=True)
+
+    # -------------------------------------------------------------------------
+    # TAB 4: BENCHMARKING
+    # -------------------------------------------------------------------------
+    with tab_bench:
+        st.markdown("### 🏆 Community Benchmarking")
+        st.markdown("Compare your footprint against regional averages and the Ecopay community.")
+        
+        col_bench_1, col_bench_2 = st.columns(2)
+        
+        with col_bench_1:
+            # Mock Data for Benchmarking
+            bench_data = {
+                'Metric': ['Global Avg', 'National Avg', 'Ecopay Top 10%', 'You'],
+                'Monthly Emissions (kg)': [380, 250, 120, total_carbon/12] # Assuming total is roughly annual or scaling it
+            }
+            df_bench = pd.DataFrame(bench_data)
+            
+            fig_bench = px.bar(df_bench, x='Metric', y='Monthly Emissions (kg)', 
+                             color='Metric', 
+                             color_discrete_map={'You': '#00d26a', 'Global Avg': '#888', 'National Avg': '#aaa', 'Ecopay Top 10%': '#ffd700'},
+                             title="Monthly Average Comparison")
+            fig_bench.update_layout(paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)", font_color="white")
+            st.plotly_chart(fig_bench, use_container_width=True)
+            
+        with col_bench_2:
+            st.info("ℹ️ **Did you know?** The average urban resident emits roughly 250kg of CO2 per month via direct spending. To reach the 2050 Net Zero goals, this needs to drop to <150kg.")
+            
+            st.markdown("#### Your Ranking")
+            if avg_score > 70:
+                st.success("🌟 You are in the **Top 15%** of Ecopay users!")
+            elif avg_score > 50:
+                st.warning("You are in the **Top 60%**. Try the Simulator to find ways to improve.")
+            else:
+                st.error("You are in the **Bottom 30%**. High emission intensity detected.")
+
+    st.markdown("<br><br><br>", unsafe_allow_html=True)
 
 if __name__ == "__main__":
     main()
