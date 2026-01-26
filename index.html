@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>GREENIQ | Team HyperOPS</title>
+    <title>COGNIS | Team HyperOPS</title>
     
     <!-- Theme Color -->
     <meta name="theme-color" content="#000000">
@@ -17,16 +17,16 @@
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@200;300;400;500;600;700;800&display=swap" rel="stylesheet">
     
     <style>
-        /* --- GREENIQ / HyperOPS Design System --- */
+        /* --- COGNIS / HyperOPS Design System (Luma Theme Applied) --- */
         :root {
-            --bg: #000000;
-            --accent-1: #3b82f6; /* Blue */
-            --accent-2: #8b5cf6; /* Purple */
-            --accent-3: #ec4899; /* Pink */
+            --bg: #000000; /* Luma Deep Black */
+            --accent-1: #3b82f6; /* Luma Blue */
+            --accent-2: #8b5cf6; /* Luma Purple */
+            --accent-3: #ec4899; /* Luma Pink */
             --border: rgba(255, 255, 255, 0.1);
         }
 
-        /* DARK SCROLLBAR STYLING - Removes "White Bars" */
+        /* DARK SCROLLBAR STYLING */
         ::-webkit-scrollbar {
             width: 6px;
             height: 6px;
@@ -47,7 +47,7 @@
             width: 100%;
             margin: 0;
             padding: 0;
-            overflow: hidden; /* CRITICAL: Prevents page scrolling */
+            overflow: hidden;
         }
 
         body {
@@ -59,7 +59,7 @@
             flex-direction: column;
         }
 
-        /* Fixed Background System */
+        /* Fixed Background System (Luma Grid) */
         .bg-fixed-container {
             position: fixed;
             inset: 0;
@@ -87,7 +87,7 @@
             max-width: 800px;
             max-height: 800px;
             border-radius: 50%;
-            filter: blur(80px);
+            filter: blur(60px); 
             opacity: 0.25; 
             pointer-events: none;
             will-change: transform;
@@ -104,41 +104,15 @@
 
         /* Glass Panels */
         .glass-panel {
-            background: rgba(255, 255, 255, 0.02);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
+            background: rgba(255, 255, 255, 0.03); 
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
             border: 1px solid var(--border);
             transition: transform 0.3s ease, border-color 0.3s ease;
         }
         
-        /* The HyperOPS Border Beam Effect */
-        .border-beam {
-            position: relative;
-        }
-        
-        .border-beam::before {
-            content: "";
-            position: absolute;
-            inset: -1px;
-            border-radius: inherit;
-            padding: 1px;
-            background: conic-gradient(from 0deg, transparent 50%, var(--accent-1), var(--accent-2), var(--accent-3), transparent);
-            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-            mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-            -webkit-mask-composite: destination-out;
-            mask-composite: exclude;
-            animation: spin-beam 5s linear infinite;
-            pointer-events: none;
-            z-index: 10;
-        }
-
-        @keyframes spin-beam {
-            from { transform: rotate(0deg); }
-            to { transform: rotate(360deg); }
-        }
-
         .gradient-brand {
-            background: linear-gradient(to right, #ffffff, #818cf8, #c084fc);
+            background: linear-gradient(to right, #ffffff, #818cf8, #c084fc); 
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
@@ -159,58 +133,27 @@
             text-transform: uppercase;
             padding: 0.25rem 0.75rem;
             border-radius: 999px;
-            background: rgba(255,255,255,0.05);
-            border: 1px solid rgba(255,255,255,0.1);
-            color: #94a3b8;
+            background: rgba(236, 72, 153, 0.1); 
+            border: 1px solid rgba(236, 72, 153, 0.2);
+            color: #ec4899;
         }
 
-        /* Streamlit Iframe Specifics */
-        .streamlit-container {
-            width: 100%;
-            height: 100%; /* Fill container */
-            position: relative;
-            overflow: hidden; /* Clips the extended iframe height */
-            border-radius: 1.5rem;
-        }
-
-        .streamlit-frame {
-            width: 100%;
-            /* CRITICAL FIX: 
-               Extend height by 50px to push the fixed bottom footer (watermark) 
-               out of the visible "overflow: hidden" container area.
-            */
-            height: calc(100% + 50px); 
-            border: none;
-            margin-top: -2px; 
-            background: transparent;
-            
-            /* Zoom to hide side margins/bars */
-            transform: scale(1.05);
-            transform-origin: center top;
-        }
-
-        /* Loading Spinner */
-        .loader-overlay {
-            position: absolute;
-            inset: 0;
-            background: #000000;
+        .info-heading {
+            color: white;
+            font-weight: 700;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            margin-bottom: 0.5rem;
             display: flex;
             align-items: center;
-            justify-content: center;
-            z-index: 20;
-            transition: opacity 0.5s ease;
+            gap: 0.5rem;
         }
-
-        .stat-card {
-            background: rgba(255,255,255,0.03);
-            border: 1px solid rgba(255,255,255,0.05);
-            padding: 1rem;
-            border-radius: 1rem;
-            transition: all 0.3s;
-        }
-        .stat-card:hover {
-            background: rgba(255,255,255,0.05);
-            border-color: rgba(255,255,255,0.1);
+        
+        .info-text {
+            color: #94a3b8;
+            font-size: 0.8rem;
+            line-height: 1.5;
         }
     </style>
 </head>
@@ -222,137 +165,214 @@
         <div class="aura aura-2"></div>
     </div>
 
-    <!-- Main Content Wrapper: Forced Height 100vh. Reduced padding (pt-4, pb-4) for more vertical space -->
+    <!-- Main Content Wrapper -->
     <div class="relative z-10 w-full h-screen flex flex-col pt-4 pb-4 px-4 md:px-6 overflow-hidden">
         
-        <!-- Header: Reduced margin (mb-4) for more vertical space -->
-        <header class="w-full max-w-[98rem] mx-auto flex flex-col md:flex-row justify-between items-center mb-4 reveal active gap-4 shrink-0">
-            <div class="flex items-center gap-4">
-                <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-blue-600 to-purple-600 flex items-center justify-center shadow-lg shadow-blue-900/40">
-                    <i data-lucide="leaf" class="w-6 h-6 text-white"></i>
-                </div>
-                <div>
-                    <h1 class="text-3xl font-black tracking-tighter leading-none">
-                        <span class="gradient-brand">GREENIQ</span>
-                    </h1>
-                    <div class="flex items-center gap-2 mt-1 opacity-60">
-                         <span class="text-[10px] uppercase tracking-[0.2em] font-bold">HyperOPS Engine</span>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="flex flex-wrap justify-center gap-2">
-                <span class="tech-tag">Real-Time</span>
-                <span class="tech-tag">Visualizer</span>
-                <span class="tech-tag">Live Env</span>
-            </div>
-        </header>
-
-        <!-- Two Panel Layout: Flex Grow to Fill Height. Reduced gap (gap-4) for tighter fit -->
-        <main class="w-full max-w-[98rem] mx-auto grid grid-cols-1 lg:grid-cols-4 gap-4 flex-grow min-h-0 reveal">
+        <!-- Two Panel Layout -->
+        <main class="w-full max-w-[98rem] mx-auto grid grid-cols-1 lg:grid-cols-4 gap-4 flex-grow min-h-0 reveal active">
             
             <!-- LEFT PANEL: Context & Stats -->
             <aside class="lg:col-span-1 flex flex-col gap-4 h-full overflow-hidden">
                 
-                <!-- Status Panel -->
-                <div class="glass-panel rounded-3xl p-6 flex-grow flex flex-col gap-6 overflow-y-auto">
-                    <div class="flex items-center gap-2 mb-2 shrink-0">
-                        <i data-lucide="cpu" class="w-5 h-5 text-blue-400"></i>
-                        <h2 class="text-lg font-bold">System Status</h2>
+                <!-- BRANDING HEADER -->
+                <div class="glass-panel rounded-2xl p-5 flex items-center gap-4 shrink-0 shadow-lg shadow-blue-900/20">
+                     <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-blue-600 to-pink-500 flex items-center justify-center shadow-lg shadow-blue-900/40 shrink-0">
+                        <i data-lucide="shield-check" class="w-6 h-6 text-white"></i>
                     </div>
-
-                    <!-- Stat Stack -->
-                    <div class="space-y-3 shrink-0">
-                        <div class="stat-card">
-                            <div class="flex justify-between items-center mb-1">
-                                <span class="text-[10px] text-slate-400 uppercase tracking-widest">Latency</span>
-                                <i data-lucide="wifi" class="w-3 h-3 text-green-400"></i>
-                            </div>
-                            <div class="text-2xl font-bold text-white">45<span class="text-sm text-slate-500 font-normal">ms</span></div>
-                        </div>
-
-                        <div class="stat-card">
-                            <div class="flex justify-between items-center mb-1">
-                                <span class="text-[10px] text-slate-400 uppercase tracking-widest">Engine</span>
-                                <i data-lucide="server" class="w-3 h-3 text-blue-400"></i>
-                            </div>
-                            <div class="text-sm font-bold text-blue-300">Streamlit Cloud</div>
-                        </div>
-
-                        <div class="stat-card">
-                            <div class="flex justify-between items-center mb-1">
-                                <span class="text-[10px] text-slate-400 uppercase tracking-widest">Security</span>
-                                <i data-lucide="shield-check" class="w-3 h-3 text-purple-400"></i>
-                            </div>
-                            <div class="text-sm font-bold text-purple-300">Encrypted (TLS)</div>
-                        </div>
-
-                        <div class="stat-card border-green-500/20 bg-green-500/5">
-                            <div class="flex justify-between items-center mb-1">
-                                <span class="text-[10px] text-green-400 uppercase tracking-widest">Operational</span>
-                                <div class="w-2 h-2 rounded-full bg-green-400 animate-pulse"></div>
-                            </div>
-                            <div class="text-sm font-bold text-green-300">System Normal</div>
-                        </div>
-                    </div>
-
-                    <div class="mt-auto pt-6 border-t border-white/10 shrink-0">
-                        <h3 class="text-xs font-bold text-slate-500 uppercase tracking-widest mb-3">Active Region</h3>
-                        <div class="flex items-center gap-3 opacity-80">
-                            <div class="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center">
-                                <i data-lucide="globe" class="w-4 h-4 text-slate-300"></i>
-                            </div>
-                            <div>
-                                <div class="text-xs text-white font-semibold">Asia Pacific</div>
-                                <div class="text-[10px] text-slate-400">ap-south-1</div>
-                            </div>
+                    <div>
+                        <h1 class="text-2xl font-black tracking-tighter leading-none">
+                            <span class="gradient-brand">COGNIS</span>
+                        </h1>
+                        <div class="flex items-center gap-2 mt-1 opacity-60">
+                             <span class="text-[9px] uppercase tracking-[0.2em] font-bold text-pink-200">Decoding Intent. Defending Truth.</span>
                         </div>
                     </div>
                 </div>
 
-                <!-- Footer Credit (Moved to sidebar) -->
+                <!-- Info Panel -->
+                <div class="glass-panel rounded-3xl p-6 flex-grow flex flex-col gap-6 overflow-y-auto">
+                    
+                    <!-- Title Section -->
+                    <div class="shrink-0 border-b border-white/10 pb-4">
+                        <h2 class="text-xl font-bold text-white leading-tight mb-1">Predictive Cybersecurity</h2>
+                        <p class="text-[10px] text-pink-400 font-bold uppercase tracking-widest leading-relaxed">
+                            Phishing & Social Engineering Detection
+                        </p>
+                        <div class="flex flex-wrap gap-2 mt-3">
+                            <span class="px-2 py-1 rounded bg-white/5 border border-white/10 text-[9px] uppercase tracking-wider text-slate-300">Software</span>
+                            <span class="px-2 py-1 rounded bg-white/5 border border-white/10 text-[9px] uppercase tracking-wider text-slate-300">NLP</span>
+                            <span class="px-2 py-1 rounded bg-white/5 border border-white/10 text-[9px] uppercase tracking-wider text-slate-300">CyberSec</span>
+                        </div>
+                    </div>
+
+                    <!-- Content Stack -->
+                    <div class="space-y-5 shrink-0">
+                        
+                        <!-- Context -->
+                        <div>
+                            <h3 class="info-heading">
+                                <i data-lucide="alert-triangle" class="w-3 h-3 text-red-500"></i>
+                                The Problem: Human Error
+                            </h3>
+                            <p class="info-text">
+                                Firewalls catch malware, but who stops the con artist? <strong class="text-white">98% of breaches</strong> start with social engineering, bypassing technical defenses by hacking the human, not the machine.
+                            </p>
+                        </div>
+
+                        <!-- Objective -->
+                        <div>
+                            <h3 class="info-heading">
+                                <i data-lucide="zap" class="w-3 h-3 text-yellow-400"></i>
+                                The Solution: Cognitive Defense
+                            </h3>
+                            <p class="info-text">
+                                COGNIS is the world's first <strong class="text-white">Cognitive Intent Firewall</strong>. We shift security from <em>Reactive Scanning</em> to <em>Predictive Profiling</em>, neutralizing psychological triggers before a click occurs.
+                            </p>
+                        </div>
+
+                        <!-- Components -->
+                        <div>
+                            <h3 class="info-heading">
+                                <i data-lucide="cpu" class="w-3 h-3 text-pink-400"></i>
+                                The Innovation Stack
+                            </h3>
+                            <ul class="list-disc list-outside ml-3 space-y-2 info-text marker:text-blue-500">
+                                <li class="pl-1"><strong class="text-white">NLP Intent Engine:</strong> Decodes hidden "Urgency" & "Coercion" cues invisible to standard filters.</li>
+                                <li class="pl-1"><strong class="text-white">Dynamic Risk Topology:</strong> Real-time user susceptibility scoring based on live behavior.</li>
+                                <li class="pl-1"><strong class="text-white">Zero-Hour Intel:</strong> Instant artifact validation against global threat feeds.</li>
+                            </ul>
+                        </div>
+
+                        <!-- Considerations -->
+                        <div>
+                            <h3 class="info-heading">
+                                <i data-lucide="trophy" class="w-3 h-3 text-emerald-400"></i>
+                                Why We Win
+                            </h3>
+                            <p class="info-text">
+                                We don't just block; we explain. Our <strong>Explainable AI (XAI)</strong> trains users in real-time. With <strong class="text-white">99.7% accuracy</strong> and seamless API integration, COGNIS is the future of Zero-Trust Communication.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Footer Credit -->
                 <div class="glass-panel rounded-2xl p-4 text-center shrink-0">
                      <div class="text-[10px] font-bold uppercase tracking-[0.2em] text-slate-500 mb-1">Developed By</div>
                     <div class="text-sm font-bold text-white tracking-widest">
-                        Team <span class="text-blue-400">HyperOPS</span>
+                        Team <span class="text-pink-400">HyperOPS</span>
                     </div>
                 </div>
 
             </aside>
 
-            <!-- RIGHT PANEL: Main Visualizer -->
+            <!-- RIGHT PANEL: Module Grid -->
             <section class="lg:col-span-3 h-full overflow-hidden">
-                <div class="glass-panel border-beam rounded-3xl p-1 md:p-2 relative shadow-2xl shadow-blue-900/20 h-full">
+                <div class="glass-panel rounded-3xl p-6 relative shadow-2xl shadow-blue-900/20 h-full flex flex-col">
                     
-                    <div class="streamlit-container bg-black/40 rounded-2xl relative h-full">
-                        
-                        <!-- Loader -->
-                        <div id="loader" class="loader-overlay rounded-2xl">
-                            <div class="text-center">
-                                <i data-lucide="loader-2" class="w-10 h-10 text-blue-500 animate-spin mx-auto mb-4"></i>
-                                <p class="text-xs uppercase tracking-widest text-slate-400">Establishing Secure Uplink...</p>
-                            </div>
-                        </div>
-
-                        <!-- IFRAME -->
-                        <iframe 
-                            id="vizIframe"
-                            src="https://hyperops-kprcoarnzbxxzuvbdthhtx.streamlit.app/?embed=true" 
-                            class="streamlit-frame rounded-2xl"
-                            title="GreenIQ Dashboard"
-                            allow="camera; microphone; geolocation"
-                        ></iframe>
-                        
+                    <!-- Grid Header -->
+                    <div class="mb-6 flex justify-between items-end shrink-0 border-b border-white/5 pb-4">
+                         <div>
+                            <h2 class="text-3xl font-bold text-white tracking-tighter">System Architectures</h2>
+                            <p class="text-xs text-slate-400 uppercase tracking-widest mt-1">Active Neural Modules</p>
+                         </div>
                     </div>
+                    
+                    <!-- Modules Grid -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 h-full overflow-y-auto pb-4 pr-1">
+                        
+                         <!-- Module 1 -->
+                         <div class="glass-panel p-6 rounded-2xl flex flex-col items-center justify-center text-center gap-5 hover:bg-white/5 transition-all duration-300 group border border-white/5 hover:border-blue-500/30">
+                             <div class="w-20 h-20 rounded-2xl bg-blue-500/5 flex items-center justify-center group-hover:scale-110 group-hover:bg-blue-500/10 transition-all duration-500 border border-blue-500/20 shadow-lg shadow-blue-500/5">
+                                 <i data-lucide="inbox" class="w-10 h-10 text-blue-400 group-hover:text-blue-300 transition-colors"></i>
+                             </div>
+                             <div>
+                                 <h3 class="text-xs font-bold uppercase tracking-[0.15em] text-slate-300 leading-relaxed mb-1">Module 01</h3>
+                                 <h4 class="text-sm font-bold text-white uppercase tracking-wider">Communication<br>Ingestion Layer</h4>
+                             </div>
+                         </div>
 
-                    <!-- Decorative UI Elements -->
-                    <div class="absolute top-6 right-6 flex gap-2 pointer-events-none z-10">
-                        <div class="w-2 h-2 rounded-full bg-green-500 animate-pulse shadow-[0_0_10px_#22c55e]"></div>
-                        <span class="text-[10px] uppercase font-bold text-green-500 tracking-wider">Live</span>
+                         <!-- Module 2 -->
+                         <div class="glass-panel p-6 rounded-2xl flex flex-col items-center justify-center text-center gap-5 hover:bg-white/5 transition-all duration-300 group border border-white/5 hover:border-purple-500/30">
+                             <div class="w-20 h-20 rounded-2xl bg-purple-500/5 flex items-center justify-center group-hover:scale-110 group-hover:bg-purple-500/10 transition-all duration-500 border border-purple-500/20 shadow-lg shadow-purple-500/5">
+                                 <i data-lucide="scan-face" class="w-10 h-10 text-purple-400 group-hover:text-purple-300 transition-colors"></i>
+                             </div>
+                             <div>
+                                <h3 class="text-xs font-bold uppercase tracking-[0.15em] text-slate-300 leading-relaxed mb-1">Module 02</h3>
+                                <h4 class="text-sm font-bold text-white uppercase tracking-wider">Intent & Manipulation<br>Detection</h4>
+                            </div>
+                         </div>
+
+                         <!-- Module 3 -->
+                         <div class="glass-panel p-6 rounded-2xl flex flex-col items-center justify-center text-center gap-5 hover:bg-white/5 transition-all duration-300 group border border-white/5 hover:border-pink-500/30">
+                             <div class="w-20 h-20 rounded-2xl bg-pink-500/5 flex items-center justify-center group-hover:scale-110 group-hover:bg-pink-500/10 transition-all duration-500 border border-pink-500/20 shadow-lg shadow-pink-500/5">
+                                 <i data-lucide="radar" class="w-10 h-10 text-pink-400 group-hover:text-pink-300 transition-colors"></i>
+                             </div>
+                             <div>
+                                <h3 class="text-xs font-bold uppercase tracking-[0.15em] text-slate-300 leading-relaxed mb-1">Module 03</h3>
+                                <h4 class="text-sm font-bold text-white uppercase tracking-wider">Contextual Risk<br>Analysis Engine</h4>
+                            </div>
+                         </div>
+
+                         <!-- Module 4 -->
+                         <div class="glass-panel p-6 rounded-2xl flex flex-col items-center justify-center text-center gap-5 hover:bg-white/5 transition-all duration-300 group border border-white/5 hover:border-blue-500/30">
+                             <div class="w-20 h-20 rounded-2xl bg-blue-500/5 flex items-center justify-center group-hover:scale-110 group-hover:bg-blue-500/10 transition-all duration-500 border border-blue-500/20 shadow-lg shadow-blue-500/5">
+                                 <i data-lucide="globe-lock" class="w-10 h-10 text-blue-400 group-hover:text-blue-300 transition-colors"></i>
+                             </div>
+                             <div>
+                                <h3 class="text-xs font-bold uppercase tracking-[0.15em] text-slate-300 leading-relaxed mb-1">Module 04</h3>
+                                <h4 class="text-sm font-bold text-white uppercase tracking-wider">Real-Time URL &<br>Artifact Intelligence</h4>
+                            </div>
+                         </div>
+
+                         <!-- Module 5 -->
+                         <div class="glass-panel p-6 rounded-2xl flex flex-col items-center justify-center text-center gap-5 hover:bg-white/5 transition-all duration-300 group border border-white/5 hover:border-purple-500/30">
+                             <div class="w-20 h-20 rounded-2xl bg-purple-500/5 flex items-center justify-center group-hover:scale-110 group-hover:bg-purple-500/10 transition-all duration-500 border border-purple-500/20 shadow-lg shadow-purple-500/5">
+                                 <i data-lucide="activity" class="w-10 h-10 text-purple-400 group-hover:text-purple-300 transition-colors"></i>
+                             </div>
+                             <div>
+                                <h3 class="text-xs font-bold uppercase tracking-[0.15em] text-slate-300 leading-relaxed mb-1">Module 05</h3>
+                                <h4 class="text-sm font-bold text-white uppercase tracking-wider">Predictive Risk<br>Scoring Engine</h4>
+                            </div>
+                         </div>
+
+                         <!-- Module 6 -->
+                         <div class="glass-panel p-6 rounded-2xl flex flex-col items-center justify-center text-center gap-5 hover:bg-white/5 transition-all duration-300 group border border-white/5 hover:border-pink-500/30">
+                             <div class="w-20 h-20 rounded-2xl bg-pink-500/5 flex items-center justify-center group-hover:scale-110 group-hover:bg-pink-500/10 transition-all duration-500 border border-pink-500/20 shadow-lg shadow-pink-500/5">
+                                 <i data-lucide="fingerprint" class="w-10 h-10 text-pink-400 group-hover:text-pink-300 transition-colors"></i>
+                             </div>
+                             <div>
+                                <h3 class="text-xs font-bold uppercase tracking-[0.15em] text-slate-300 leading-relaxed mb-1">Module 06</h3>
+                                <h4 class="text-sm font-bold text-white uppercase tracking-wider">Employee/User<br>Susceptibility Profiling</h4>
+                            </div>
+                         </div>
                     </div>
                 </div>
             </section>
         </main>
+    </div>
+
+    <!-- AI Chatbot Widget (Bottom Right) -->
+    <div class="fixed bottom-6 right-6 z-50 group cursor-pointer">
+        <!-- Glow Backdrop -->
+        <div class="absolute inset-0 bg-gradient-to-r from-blue-500 to-pink-500 rounded-full blur-xl opacity-20 group-hover:opacity-40 transition-opacity duration-500"></div>
+        
+        <!-- Button Container -->
+        <div class="glass-panel relative w-14 h-14 rounded-full flex items-center justify-center border border-white/20 hover:border-white/40 hover:scale-110 transition-all duration-300 overflow-hidden">
+            <!-- Animated Gradient Background -->
+            <div class="absolute inset-0 bg-gradient-to-tr from-blue-600/20 via-purple-600/20 to-pink-600/20 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+            
+            <!-- Icon -->
+            <i data-lucide="bot" class="w-7 h-7 text-white relative z-10 drop-shadow-[0_0_10px_rgba(255,255,255,0.5)]"></i>
+        </div>
+
+        <!-- Label Tooltip -->
+        <div class="absolute right-full top-1/2 -translate-y-1/2 mr-4 glass-panel px-4 py-2 rounded-xl opacity-0 translate-x-[10px] group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300 pointer-events-none">
+            <div class="flex items-center gap-2 whitespace-nowrap">
+                <div class="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse"></div>
+                <span class="text-[10px] font-bold uppercase tracking-widest text-white">HyperBot Online</span>
+            </div>
+        </div>
     </div>
 
     <script>
@@ -376,20 +396,6 @@
                 aura.style.transform = `translate(${x * speed}px, ${y * speed}px)`;
             });
         });
-
-        // Iframe Loading Logic
-        const iframe = document.getElementById('vizIframe');
-        const loader = document.getElementById('loader');
-
-        // Note: iframe.onload triggers when the iframe content is fully loaded
-        iframe.onload = function() {
-            setTimeout(() => {
-                loader.style.opacity = '0';
-                setTimeout(() => {
-                    loader.style.display = 'none';
-                }, 500);
-            }, 1500); // Slight delay for smoother visual transition
-        };
     </script>
 </body>
 </html>
