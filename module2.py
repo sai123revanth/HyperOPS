@@ -41,11 +41,12 @@ st.markdown("""
     
     /* FLOATING CART LOGO STYLING
        Transforming the popover button into a Floating Action Button (FAB)
+       Moved to parallel with the Heading
     */
     div[data-testid="stPopover"] {
         position: fixed !important;
-        top: 20px !important; /* Position at top right */
-        right: 30px !important;
+        top: 55px !important; /* Adjusted to align perfectly with the Header/Title row */
+        right: 40px !important;
         z-index: 999999 !important; /* Topmost layer */
         width: auto !important;
     }
@@ -848,6 +849,9 @@ def main():
             st.info("**Permanence**\nThe CO2 removed is kept out of the atmosphere for a long time (e.g., 100+ years). Reversal risk is managed via insurance buffers.")
         with e3:
             st.info("**No Leakage**\nProtecting a forest here doesn't just move the logging to a neighboring forest. The net impact is globally positive.")
+
+    # Extra space for scrolling at the bottom
+    st.markdown("<br>" * 5, unsafe_allow_html=True)
 
 if __name__ == "__main__":
     main()
