@@ -38,7 +38,7 @@ st.markdown("""
         flex-direction: column;
         height: 100%;
         box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
-        margin-bottom: 24px;
+        margin-bottom: 10px;
     }
     
     .project-card-container:hover {
@@ -176,6 +176,26 @@ st.markdown("""
         margin-bottom: 30px;
         border: 1px solid rgba(255,255,255,0.1);
         box-shadow: inset 0 2px 4px rgba(0,0,0,0.2);
+    }
+    
+    /* Tab Styling inside Cards */
+    .stTabs [data-baseweb="tab-list"] {
+        gap: 2px;
+        background-color: rgba(255,255,255,0.02);
+        border-radius: 8px;
+        padding: 4px;
+    }
+    .stTabs [data-baseweb="tab"] {
+        height: 30px;
+        white-space: pre-wrap;
+        border-radius: 6px;
+        color: #aaa;
+        font-size: 0.8rem;
+        padding: 0 10px;
+    }
+    .stTabs [aria-selected="true"] {
+        background-color: rgba(255,255,255,0.1) !important;
+        color: #fff !important;
     }
     
     h1, h2, h3, h4 { font-family: 'Inter', sans-serif; color: white; }
@@ -620,7 +640,6 @@ def main():
         st.metric("Net Zero Gap", f"{net_gap:,.0f} kg", delta="Remaining to Offset", delta_color="inverse")
         
     # Visual Equivalence Bar
-    # FIX: Removed indentation to ensure st.markdown renders HTML correctly without code blocks
     st.markdown(textwrap.dedent(f"""
     <div style="background: rgba(255,255,255,0.05); padding: 15px; border-radius: 10px; margin-top: 10px; display: flex; justify-content: space-around; align-items: center; flex-wrap: wrap;">
     <span style="font-size: 1.1rem; margin: 5px;">⚠️ <b>{net_gap:,.0f} kg</b> Gap is equivalent to:</span>
@@ -683,7 +702,6 @@ def main():
             
             # Using textwrap.dedent to strip common leading whitespace from every line of the string.
             # This prevents markdown from interpreting the HTML as a code block.
-            # FIX: Removed internal indentation to prevent Markdown code block triggering
             card_html = textwrap.dedent(f"""
             <div class="project-card-container">
             <img src="{img_url}" class="project-image" alt="{project['name']}">
@@ -717,8 +735,11 @@ def main():
             """)
             st.markdown(card_html, unsafe_allow_html=True)
             
-            # Interactive Options (Expanded to include Details/Options as requested)
-            with st.expander("More Options & Details"):
+            # Interactive Options (Visible by default - Expander removed)
+            # Adding a wrapper container to group these controls
+            with st.container():
+                st.markdown('<div style="margin-top: 10px;"></div>', unsafe_allow_html=True) # Spacer
+                
                 tabs = st.tabs(["Purchase", "Validation", "Impact"])
                 
                 with tabs[0]:
@@ -748,6 +769,8 @@ def main():
                     st.markdown("**SDG Alignment:**")
                     st.markdown(f"This project contributes to goals {', '.join(project['sdgs'])}.")
                     st.progress(project['funded_percent']/100, text="Funding Goal")
+            
+            st.markdown("---")
 
 
     # 4. EDUCATIONAL FOOTER
