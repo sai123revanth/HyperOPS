@@ -14,7 +14,9 @@ import time
 DEFAULT_URLS = [
     "https://hyperops-dyu5cgjkrxdr5gnralziv4.streamlit.app/",
     # Add more links below like this:
-    "link here"
+    "https://hyperops-evgqdzzaj8rg8awsjvm4dp.streamlit.app/",
+    "https://hyperops-c7ygrqpuvxudrx6pfrsc3d.streamlit.app/",
+    "Link Here"
 ]
 
 def get_urls():
