@@ -20,7 +20,8 @@ st.markdown("""
 <style>
     /* Global App Styling */
     .stApp {
-        background: linear-gradient(150deg, #050a0e 0%, #001f3f 50%, #001a10 100%);
+        /* Modern Attractive Green Gradient */
+        background: linear-gradient(160deg, #02040a 0%, #062c1b 45%, #0d5c3b 100%);
         background-attachment: fixed;
         color: #fafafa;
     }
