@@ -44,7 +44,7 @@ st.markdown("""
     */
     div[data-testid="stPopover"] {
         position: fixed !important;
-        bottom: 30px !important; /* Position at bottom right for better visibility */
+        top: 20px !important; /* Position at top right */
         right: 30px !important;
         z-index: 999999 !important; /* Topmost layer */
         width: auto !important;
