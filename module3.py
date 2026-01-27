@@ -238,34 +238,34 @@ def main():
         alert_class = "safe" if is_safe else "alert"
         alert_color = "#00d26a" if is_safe else "#ff4b4b"
         
-        # FIX: textwrap.dedent ensures proper HTML rendering by removing indentation
-        st.markdown(textwrap.dedent(f"""
-        <div class="glass-card">
-            <h3 style="margin-top:0;">🌍 Planetary Status</h3>
-            <div class="metric-highlight {alert_class}">
-                <div class="big-number">{multiplier:.1f}x</div>
-                <div class="sub-text">Above Sustainable Levels</div>
-            </div>
-            <p style="color:#e0e0e0; font-size:0.9rem;">
-                Your current lifestyle requires <b>{multiplier:.1f} Earths</b> if everyone lived like you. 
-                You are exceeding the <span style="color:#ffc107">2030 Carbon Budget</span>.
-            </p>
-        </div>
-        """), unsafe_allow_html=True)
+        # Manually removing indentation to ensure HTML renders correctly
+        st.markdown(f"""
+<div class="glass-card">
+    <h3 style="margin-top:0;">🌍 Planetary Status</h3>
+    <div class="metric-highlight {alert_class}">
+        <div class="big-number">{multiplier:.1f}x</div>
+        <div class="sub-text">Above Sustainable Levels</div>
+    </div>
+    <p style="color:#e0e0e0; font-size:0.9rem;">
+        Your current lifestyle requires <b>{multiplier:.1f} Earths</b> if everyone lived like you. 
+        You are exceeding the <span style="color:#ffc107">2030 Carbon Budget</span>.
+    </p>
+</div>
+""", unsafe_allow_html=True)
         
     with hero_col2:
-        # FIX: textwrap.dedent ensures proper HTML rendering
-        st.markdown(textwrap.dedent(f"""
-        <div class="glass-card">
-            <h3 style="margin-top:0;">📊 Strategic Analysis</h3>
-            <p>To align with the <b>Paris Agreement</b>, your annual emissions must drop below <b>{TARGET_2030} tons</b> by 2030.</p>
-            <div style="margin-top: 15px;">
-                <span class="policy-badge">📜 Paris Agreement Art. 2</span>
-                <span class="policy-badge">🇺🇳 UN SDG 13</span>
-                <span class="policy-badge">📉 IPCC AR6 Report</span>
-            </div>
-        </div>
-        """), unsafe_allow_html=True)
+        # Manually removing indentation to ensure HTML renders correctly
+        st.markdown(f"""
+<div class="glass-card">
+    <h3 style="margin-top:0;">📊 Strategic Analysis</h3>
+    <p>To align with the <b>Paris Agreement</b>, your annual emissions must drop below <b>{TARGET_2030} tons</b> by 2030.</p>
+    <div style="margin-top: 15px;">
+        <span class="policy-badge">📜 Paris Agreement Art. 2</span>
+        <span class="policy-badge">🇺🇳 UN SDG 13</span>
+        <span class="policy-badge">📉 IPCC AR6 Report</span>
+    </div>
+</div>
+""", unsafe_allow_html=True)
         
         # Key Comparison Metrics
         m1, m2, m3 = st.columns(3)
@@ -319,23 +319,23 @@ def main():
         # Progress Bar Logic
         progress_val = min(1.0, simulated_footprint / user_footprint)
         
-        # FIX: textwrap.dedent ensures proper HTML rendering
-        st.markdown(textwrap.dedent(f"""
-        <div style="background:rgba(255,255,255,0.05); padding:20px; border-radius:12px; border:1px solid rgba(255,255,255,0.1);">
-            <div style="display:flex; justify-content:space-between; align-items:center;">
-                <h3>Projected Alignment</h3>
-                <h2 style="color: {'#00d26a' if sim_multiplier <= 1 else '#ffc107'}; margin:0;">{sim_multiplier:.1f}x</h2>
-            </div>
-            <p style="color:#aaa;">New Annual Footprint: <b>{simulated_footprint:.1f} tons</b></p>
-            
-            <div style="background:#333; height:10px; border-radius:5px; overflow:hidden; margin-top:10px;">
-                <div style="background:linear-gradient(90deg, #00d26a, #00b359); width:{progress_val*100}%; height:100%;"></div>
-            </div>
-            <p style="text-align:right; font-size:0.8rem; margin-top:5px; color:#00d26a;">
-                Total Reduction: {(user_footprint - simulated_footprint):.1f} tons
-            </p>
-        </div>
-        """), unsafe_allow_html=True)
+        # Manually removing indentation to ensure HTML renders correctly
+        st.markdown(f"""
+<div style="background:rgba(255,255,255,0.05); padding:20px; border-radius:12px; border:1px solid rgba(255,255,255,0.1);">
+    <div style="display:flex; justify-content:space-between; align-items:center;">
+        <h3>Projected Alignment</h3>
+        <h2 style="color: {'#00d26a' if sim_multiplier <= 1 else '#ffc107'}; margin:0;">{sim_multiplier:.1f}x</h2>
+    </div>
+    <p style="color:#aaa;">New Annual Footprint: <b>{simulated_footprint:.1f} tons</b></p>
+    
+    <div style="background:#333; height:10px; border-radius:5px; overflow:hidden; margin-top:10px;">
+        <div style="background:linear-gradient(90deg, #00d26a, #00b359); width:{progress_val*100}%; height:100%;"></div>
+    </div>
+    <p style="text-align:right; font-size:0.8rem; margin-top:5px; color:#00d26a;">
+        Total Reduction: {(user_footprint - simulated_footprint):.1f} tons
+    </p>
+</div>
+""", unsafe_allow_html=True)
         
         if sim_multiplier <= 1.0:
             st.success("✅ **Success:** This policy mix aligns you with the 2030 Paris Agreement targets!")
