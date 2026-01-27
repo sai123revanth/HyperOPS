@@ -4,6 +4,7 @@ import plotly.express as px
 import plotly.graph_objects as go
 import numpy as np
 from datetime import datetime
+import textwrap # Essential for fixing HTML indentation issues
 
 # -----------------------------------------------------------------------------
 # 1. PAGE CONFIGURATION & STYLING
@@ -237,7 +238,8 @@ def main():
         alert_class = "safe" if is_safe else "alert"
         alert_color = "#00d26a" if is_safe else "#ff4b4b"
         
-        st.markdown(f"""
+        # FIX: textwrap.dedent ensures proper HTML rendering by removing indentation
+        st.markdown(textwrap.dedent(f"""
         <div class="glass-card">
             <h3 style="margin-top:0;">🌍 Planetary Status</h3>
             <div class="metric-highlight {alert_class}">
@@ -249,10 +251,11 @@ def main():
                 You are exceeding the <span style="color:#ffc107">2030 Carbon Budget</span>.
             </p>
         </div>
-        """, unsafe_allow_html=True)
+        """), unsafe_allow_html=True)
         
     with hero_col2:
-        st.markdown(f"""
+        # FIX: textwrap.dedent ensures proper HTML rendering
+        st.markdown(textwrap.dedent(f"""
         <div class="glass-card">
             <h3 style="margin-top:0;">📊 Strategic Analysis</h3>
             <p>To align with the <b>Paris Agreement</b>, your annual emissions must drop below <b>{TARGET_2030} tons</b> by 2030.</p>
@@ -262,7 +265,7 @@ def main():
                 <span class="policy-badge">📉 IPCC AR6 Report</span>
             </div>
         </div>
-        """, unsafe_allow_html=True)
+        """), unsafe_allow_html=True)
         
         # Key Comparison Metrics
         m1, m2, m3 = st.columns(3)
@@ -316,7 +319,8 @@ def main():
         # Progress Bar Logic
         progress_val = min(1.0, simulated_footprint / user_footprint)
         
-        st.markdown(f"""
+        # FIX: textwrap.dedent ensures proper HTML rendering
+        st.markdown(textwrap.dedent(f"""
         <div style="background:rgba(255,255,255,0.05); padding:20px; border-radius:12px; border:1px solid rgba(255,255,255,0.1);">
             <div style="display:flex; justify-content:space-between; align-items:center;">
                 <h3>Projected Alignment</h3>
@@ -331,7 +335,7 @@ def main():
                 Total Reduction: {(user_footprint - simulated_footprint):.1f} tons
             </p>
         </div>
-        """, unsafe_allow_html=True)
+        """), unsafe_allow_html=True)
         
         if sim_multiplier <= 1.0:
             st.success("✅ **Success:** This policy mix aligns you with the 2030 Paris Agreement targets!")
