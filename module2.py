@@ -26,6 +26,34 @@ st.markdown("""
         color: #fafafa;
     }
     
+    /* Heading Adjustments - Make it smaller and one line */
+    .stApp h1 {
+        font-family: 'Inter', sans-serif;
+        color: white;
+        font-size: 2.2rem !important; /* Reduced from default to fit one line */
+        font-weight: 800;
+        letter-spacing: -1px;
+        white-space: nowrap; /* Forces text to stay on one line */
+        overflow: hidden;
+        text-overflow: ellipsis;
+        padding-top: 10px;
+    }
+    
+    /* Sticky Floating Cart Button */
+    div[data-testid="stPopover"] {
+        position: fixed !important;
+        top: 30px;
+        right: 40px;
+        z-index: 9999; /* Ensure it stays on top of other elements */
+        background-color: transparent;
+    }
+    
+    /* Ensure the button inside the popover container looks good floating */
+    div[data-testid="stPopover"] > div > button {
+        box-shadow: 0 4px 15px rgba(0, 210, 106, 0.4);
+        border: 1px solid #00d26a;
+    }
+
     /* Advanced Project Card Container */
     .project-card-container {
         background: rgba(255, 255, 255, 0.03);
@@ -199,7 +227,7 @@ st.markdown("""
         color: #fff !important;
     }
     
-    h1, h2, h3, h4 { font-family: 'Inter', sans-serif; color: white; }
+    h2, h3, h4 { font-family: 'Inter', sans-serif; color: white; }
 </style>
 """, unsafe_allow_html=True)
 
@@ -552,54 +580,58 @@ def get_project_image(ptype, seed=1):
 
 def main():
     # --- TOP NAVIGATION & CART ---
-    col_logo, col_space, col_cart = st.columns([4, 6, 2])
+    # Using a 2-column layout to accommodate the sticky button properly
+    col_logo, col_space = st.columns([8, 2])
     
     with col_logo:
         st.title("Ecopay Offset Marketplace")
         st.markdown("##### Global Carbon Registry Access")
 
-    with col_cart:
-        st.write("") # Vertical spacer
-        # Initialize Cart State
-        if 'cart' not in st.session_state:
-            st.session_state.cart = []
+    # Cart Logic (Sticky Button is handled via CSS targeting stPopover)
+    # We place the popover logic here, but visually it will float due to CSS
+    
+    # Initialize Cart State
+    if 'cart' not in st.session_state:
+        st.session_state.cart = []
+    
+    cart_count = len(st.session_state.cart)
+    
+    # POPUP CART IMPLEMENTATION
+    # The actual placement in Python code doesn't strictly matter for 'fixed' position CSS, 
+    # but placing it near the top is good practice.
+    with st.popover(f"🛒 Cart ({cart_count})", help="View your selected offsets"):
+        st.markdown("### Your Impact Basket")
         
-        cart_count = len(st.session_state.cart)
-        
-        # POPUP CART IMPLEMENTATION
-        with st.popover(f"🛒 Cart ({cart_count})", help="View your selected offsets"):
-            st.markdown("### Your Impact Basket")
+        if not st.session_state.cart:
+            st.info("Your cart is empty. Add projects to offset your footprint.")
+        else:
+            cart_total_cost = 0
+            cart_total_offset = 0
             
-            if not st.session_state.cart:
-                st.info("Your cart is empty. Add projects to offset your footprint.")
-            else:
-                cart_total_cost = 0
-                cart_total_offset = 0
+            for i, item in enumerate(st.session_state.cart):
+                cost = item['amount'] * (item['price'] / 1000)
                 
-                for i, item in enumerate(st.session_state.cart):
-                    cost = item['amount'] * (item['price'] / 1000)
-                    
-                    with st.container():
-                        c1, c2 = st.columns([3, 1])
-                        with c1:
-                            st.markdown(f"**{item['name']}**")
-                            st.caption(f"{item['amount']:.0f} kg • ₹{cost:.0f}")
-                        with c2:
-                            if st.button("🗑️", key=f"del_{i}"):
-                                st.session_state.cart.pop(i)
-                                st.rerun()
-                    
-                    cart_total_cost += cost
-                    cart_total_offset += item['amount']
-                    st.markdown("---")
+                with st.container():
+                    c1, c2 = st.columns([3, 1])
+                    with c1:
+                        st.markdown(f"**{item['name']}**")
+                        st.caption(f"{item['amount']:.0f} kg • ₹{cost:.0f}")
+                    with c2:
+                        if st.button("🗑️", key=f"del_{i}"):
+                            st.session_state.cart.pop(i)
+                            st.rerun()
                 
-                st.metric("Total to Pay", f"₹{cart_total_cost:,.0f}")
-                st.success(f"Offsets: {cart_total_offset:,.0f} kg CO₂e")
-                
-                if st.button("Complete Purchase", type="primary"):
-                    st.balloons()
-                    st.session_state.cart = []
-                    st.success("Offset Certificate Generated! Check your email.")
+                cart_total_cost += cost
+                cart_total_offset += item['amount']
+                st.markdown("---")
+            
+            st.metric("Total to Pay", f"₹{cart_total_cost:,.0f}")
+            st.success(f"Offsets: {cart_total_offset:,.0f} kg CO₂e")
+            
+            if st.button("Complete Purchase", type="primary"):
+                st.balloons()
+                st.session_state.cart = []
+                st.success("Offset Certificate Generated! Check your email.")
 
     # --- TOP FILTERS (Previously Sidebar) ---
     with st.container():
