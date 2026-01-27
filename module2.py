@@ -39,19 +39,48 @@ st.markdown("""
         padding-top: 10px;
     }
     
-    /* Sticky Floating Cart Button */
+    /* FLOATING CART LOGO STYLING
+       Transforming the popover button into a Floating Action Button (FAB)
+    */
     div[data-testid="stPopover"] {
         position: fixed !important;
-        top: 30px;
-        right: 40px;
-        z-index: 9999; /* Ensure it stays on top of other elements */
-        background-color: transparent;
+        bottom: 30px !important; /* Position at bottom right for better visibility */
+        right: 30px !important;
+        z-index: 999999 !important; /* Topmost layer */
+        width: auto !important;
     }
     
-    /* Ensure the button inside the popover container looks good floating */
+    /* The circular button styling */
     div[data-testid="stPopover"] > div > button {
-        box-shadow: 0 4px 15px rgba(0, 210, 106, 0.4);
-        border: 1px solid #00d26a;
+        width: 65px !important;
+        height: 65px !important;
+        border-radius: 50% !important; /* Make it a perfect circle */
+        background: linear-gradient(135deg, #00d26a 0%, #00b359 100%) !important;
+        color: white !important;
+        border: 2px solid rgba(255,255,255,0.2) !important;
+        box-shadow: 0 10px 25px rgba(0, 210, 106, 0.6) !important;
+        padding: 0 !important;
+        font-size: 1.2rem !important;
+        font-weight: bold !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) !important;
+    }
+    
+    /* Hover effect for the cart logo */
+    div[data-testid="stPopover"] > div > button:hover {
+        transform: translateY(-8px) scale(1.1) !important;
+        box-shadow: 0 20px 40px rgba(0, 210, 106, 0.8) !important;
+        border-color: white !important;
+    }
+    
+    /* Ensure text inside button wraps if needed (though we keep it short) */
+    div[data-testid="stPopover"] > div > button > div {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        line-height: 1;
     }
 
     /* Advanced Project Card Container */
@@ -599,7 +628,8 @@ def main():
     # POPUP CART IMPLEMENTATION
     # The actual placement in Python code doesn't strictly matter for 'fixed' position CSS, 
     # but placing it near the top is good practice.
-    with st.popover(f"🛒 Cart ({cart_count})", help="View your selected offsets"):
+    # Updated to display a simple Cart Icon with Count inside the button
+    with st.popover(f"🛒 {cart_count}", help="View your selected offsets"):
         st.markdown("### Your Impact Basket")
         
         if not st.session_state.cart:
