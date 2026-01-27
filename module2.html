@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Offset Marketplace | ECOPAY</title>
+    
+    <!-- Theme Color -->
+    <meta name="theme-color" content="#000000">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2310b981' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><path d='M2 22h20'/><path d='M12 22v-9'/><path d='M9 10a5 5 0 0 1 5 5v7'/><path d='M12 7a5 5 0 0 1 5 5v10'/></svg>">
+    
+    <!-- Libraries -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@200;300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <style>
+        /* --- ECOPAY / HyperOPS Design System (Eco-Luma Theme) --- */
+        :root {
+            --bg: #000000; /* Deep Black */
+            --accent-1: #10b981; /* Emerald */
+            --accent-2: #06b6d4; /* Cyan/Teal */
+            --accent-3: #84cc16; /* Lime */
+            --border: rgba(255, 255, 255, 0.1);
+        }
+
+        /* DARK SCROLLBAR STYLING */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: transparent; 
+        }
+        ::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.1); 
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(255, 255, 255, 0.2); 
+        }
+
+        html, body {
+            height: 100%;
+            width: 100%;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: var(--bg);
+            color: #ffffff;
+            letter-spacing: -0.01em;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Fixed Background System (Grid) */
+        .bg-fixed-container {
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+            overflow: hidden;
+            pointer-events: none;
+            background: var(--bg);
+        }
+
+        .grid-bg {
+            position: absolute;
+            inset: 0;
+            background-image: 
+                linear-gradient(to right, rgba(255,255,255,0.08) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(255,255,255,0.08) 1px, transparent 1px);
+            background-size: 40px 40px;
+            mask-image: radial-gradient(ellipse at center, black, transparent 80%);
+            -webkit-mask-image: radial-gradient(ellipse at center, black, transparent 80%);
+        }
+
+        .aura {
+            position: absolute;
+            width: 90vw;
+            height: 90vw;
+            max-width: 800px;
+            max-height: 800px;
+            border-radius: 50%;
+            filter: blur(60px); 
+            opacity: 0.25; 
+            pointer-events: none;
+            will-change: transform;
+            animation: aura-move 20s infinite alternate ease-in-out;
+        }
+        
+        .aura-1 { background: var(--accent-1); top: -10%; left: -15%; }
+        .aura-2 { background: var(--accent-2); bottom: -10%; right: -10%; animation-delay: -7s; }
+
+        @keyframes aura-move {
+            0% { transform: translate(0, 0) scale(1); }
+            100% { transform: translate(30px, 30px) scale(1.05); }
+        }
+
+        /* Glass Panels */
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.03); 
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid var(--border);
+            transition: transform 0.3s ease, border-color 0.3s ease;
+        }
+        
+        .gradient-brand {
+            background: linear-gradient(to right, #ffffff, #34d399, #22d3ee); 
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .reveal {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.8s cubic-bezier(0.2, 0.8, 0.2, 1);
+        }
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .tech-tag {
+            font-size: 0.65rem;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            padding: 0.25rem 0.75rem;
+            border-radius: 999px;
+            background: rgba(16, 185, 129, 0.1); 
+            border: 1px solid rgba(16, 185, 129, 0.2);
+            color: #34d399;
+        }
+
+        /* Streamlit Iframe Specifics */
+        .streamlit-container {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            overflow: hidden;
+            border-radius: 1.5rem;
+        }
+
+        .streamlit-frame {
+            width: 100%;
+            height: calc(100% + 50px); 
+            border: none;
+            margin-top: -2px; 
+            background: transparent;
+            transform: scale(1.05);
+            transform-origin: center top;
+        }
+
+        /* Loading Spinner */
+        .loader-overlay {
+            position: absolute;
+            inset: 0;
+            background: #000000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 20;
+            transition: opacity 0.5s ease;
+        }
+
+        .info-heading {
+            color: white;
+            font-weight: 700;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .info-text {
+            color: #94a3b8;
+            font-size: 0.8rem;
+            line-height: 1.5;
+        }
+
+        /* Resizer Styles */
+        .resizer {
+            width: 8px;
+            cursor: col-resize;
+            transition: background-color 0.2s;
+            flex-shrink: 0;
+            margin: 0 2px;
+            border-radius: 4px;
+            display: none; /* Hidden on mobile */
+        }
+        
+        @media (min-width: 1024px) {
+            .resizer {
+                display: block;
+            }
+        }
+
+        .resizer:hover, .resizer.resizing {
+            background-color: rgba(16, 185, 129, 0.5); /* Emerald 500 */
+        }
+    </style>
+</head>
+<body>
+    <!-- Background System -->
+    <div class="bg-fixed-container">
+        <div class="grid-bg"></div>
+        <div class="aura aura-1"></div>
+        <div class="aura aura-2"></div>
+    </div>
+
+    <!-- Main Content Wrapper -->
+    <div class="relative z-10 w-full h-screen flex flex-col pt-4 pb-4 px-4 md:px-6 overflow-hidden">
+        
+        <!-- Back Navigation (Mobile) -->
+        <div class="absolute top-6 left-6 z-20 md:hidden">
+            <a href="index.html" class="glass-panel p-2 rounded-xl flex items-center justify-center text-white/50 hover:text-white transition-colors">
+                <i data-lucide="arrow-left" class="w-5 h-5"></i>
+            </a>
+        </div>
+
+        <!-- Two Panel Layout (Flex for Resizing) -->
+        <!-- Note: gap-4 is used on mobile, gap-0 on desktop to allow resizer to handle spacing -->
+        <main id="main-layout" class="w-full max-w-[98rem] mx-auto flex flex-col lg:flex-row gap-4 lg:gap-0 flex-grow min-h-0 reveal active">
+            
+            <!-- LEFT PANEL: Module Info -->
+            <aside id="left-panel" class="lg:w-[25%] flex flex-col gap-4 h-full overflow-hidden shrink-0">
+                
+                <!-- BRANDING HEADER -->
+                <div class="glass-panel rounded-2xl p-5 flex items-center gap-4 shrink-0 shadow-lg shadow-emerald-900/20">
+                     <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-emerald-600 to-teal-500 flex items-center justify-center shadow-lg shadow-emerald-900/40 shrink-0">
+                        <i data-lucide="sprout" class="w-6 h-6 text-white"></i>
+                    </div>
+                    <div>
+                        <h1 class="text-xl font-black tracking-tighter leading-none">
+                            <span class="gradient-brand">MODULE 02</span>
+                        </h1>
+                        <div class="flex items-center gap-2 mt-1 opacity-60">
+                             <span class="text-[9px] uppercase tracking-[0.2em] font-bold text-emerald-200">Offset Marketplace</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Info Panel -->
+                <div class="glass-panel rounded-3xl p-6 flex-grow flex flex-col gap-6 overflow-y-auto">
+                    
+                    <!-- Title Section -->
+                    <div class="shrink-0 border-b border-white/10 pb-4">
+                        <h2 class="text-xl font-bold text-white leading-tight mb-1">Offset Marketplace Integration</h2>
+                        <p class="text-[10px] text-emerald-400 font-bold uppercase tracking-widest leading-relaxed">
+                            Climate Action
+                        </p>
+                        <div class="flex flex-wrap gap-2 mt-3">
+                            <span class="px-2 py-1 rounded bg-white/5 border border-white/10 text-[9px] uppercase tracking-wider text-slate-300">Marketplace</span>
+                            <span class="px-2 py-1 rounded bg-white/5 border border-white/10 text-[9px] uppercase tracking-wider text-slate-300">Transactions</span>
+                        </div>
+                    </div>
+
+                    <!-- Content Stack -->
+                    <div class="space-y-5 shrink-0">
+                        
+                        <!-- Core Function -->
+                        <div>
+                            <h3 class="info-heading">
+                                <i data-lucide="cpu" class="w-3 h-3 text-emerald-400"></i>
+                                Core Function
+                            </h3>
+                            <p class="info-text">
+                                Provides intelligent offset suggestions tailored to your calculated carbon footprint, enabling immediate climate action through a curated project marketplace.
+                            </p>
+                        </div>
+
+                        <!-- Technical Detail -->
+                        <div>
+                            <h3 class="info-heading">
+                                <i data-lucide="layers" class="w-3 h-3 text-teal-400"></i>
+                                Key Features
+                            </h3>
+                            <ul class="list-disc list-outside ml-3 space-y-2 info-text marker:text-emerald-500">
+                                <li class="pl-1"><strong class="text-white">Smart Suggestions:</strong> Recommended projects based on your specific emission profile.</li>
+                                <li class="pl-1"><strong class="text-white">Project Categories:</strong> 
+                                    <span class="block mt-1 pl-1 border-l-2 border-white/10 text-[0.7rem] uppercase tracking-wide text-slate-400">
+                                        Reforestation • Renewable Energy • Methane Capture
+                                    </span>
+                                </li>
+                                <li class="pl-1"><strong class="text-white">Real-Time Equivalence:</strong> Visual impact metrics (e.g., "Offsets equal to 120 trees planted").</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Footer / Back Button -->
+                <div class="glass-panel rounded-2xl p-4 text-center shrink-0">
+                    <a href="index.html" class="flex items-center justify-center gap-2 group">
+                        <i data-lucide="arrow-left" class="w-3 h-3 text-slate-500 group-hover:text-white transition-colors"></i>
+                        <span class="text-[10px] font-bold uppercase tracking-[0.2em] text-slate-500 group-hover:text-white transition-colors">Return to Dashboard</span>
+                    </a>
+                </div>
+
+            </aside>
+
+            <!-- RESIZER HANDLE -->
+            <div id="resizer" class="resizer" title="Drag to resize"></div>
+
+            <!-- RIGHT PANEL: Streamlit Embed -->
+            <section id="right-panel" class="flex-1 min-w-0 h-full overflow-hidden relative">
+                
+                <!-- Status (No Slider) -->
+                <div class="absolute top-4 right-4 z-20">
+                    <div class="glass-panel px-3 py-1.5 rounded-full flex items-center gap-2 shadow-lg backdrop-blur-xl">
+                        <div class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse shadow-[0_0_8px_#10b981]"></div>
+                        <span class="text-[9px] uppercase font-bold text-emerald-500 tracking-wider">Active</span>
+                    </div>
+                </div>
+
+                <div class="glass-panel rounded-3xl p-1 md:p-2 relative shadow-2xl shadow-emerald-900/20 h-full">
+                    
+                    <div class="streamlit-container bg-black/40 rounded-2xl relative h-full">
+                        
+                        <!-- Loader -->
+                        <div id="loader" class="loader-overlay rounded-2xl">
+                            <div class="text-center">
+                                <i data-lucide="shopping-bag" class="w-10 h-10 text-emerald-500 animate-bounce mx-auto mb-4"></i>
+                                <p class="text-xs uppercase tracking-widest text-slate-400">Loading Marketplace...</p>
+                            </div>
+                        </div>
+
+                        <!-- IFRAME -->
+                        <!-- NOTE: Replace src with the specific Marketplace Streamlit URL if available -->
+                        <iframe 
+                            id="vizIframe"
+                            src="https://hyperops-evgqdzzaj8rg8awsjvm4dp.streamlit.app/?embed=true" 
+                            class="streamlit-frame rounded-2xl"
+                            title="Offset Marketplace"
+                            allow="camera; microphone; geolocation"
+                        ></iframe>
+                        
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- AI Chatbot Widget (Bottom Right) -->
+    <div class="fixed bottom-6 right-6 z-50 group cursor-pointer">
+        <div class="absolute inset-0 bg-gradient-to-r from-emerald-500 to-teal-500 rounded-full blur-xl opacity-20 group-hover:opacity-40 transition-opacity duration-500"></div>
+        <div class="glass-panel relative w-14 h-14 rounded-full flex items-center justify-center border border-white/20 hover:border-white/40 hover:scale-110 transition-all duration-300 overflow-hidden">
+            <div class="absolute inset-0 bg-gradient-to-tr from-emerald-600/20 via-teal-600/20 to-lime-600/20 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+            <i data-lucide="bot" class="w-7 h-7 text-white relative z-10 drop-shadow-[0_0_10px_rgba(255,255,255,0.5)]"></i>
+        </div>
+        <div class="absolute right-full top-1/2 -translate-y-1/2 mr-4 glass-panel px-4 py-2 rounded-xl opacity-0 translate-x-[10px] group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300 pointer-events-none">
+            <div class="flex items-center gap-2 whitespace-nowrap">
+                <div class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></div>
+                <span class="text-[10px] font-bold uppercase tracking-widest text-white">EcoBot Online</span>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        lucide.createIcons();
+
+        // Reveal Animation on Scroll
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) entry.target.classList.add('active');
+            });
+        }, { threshold: 0.1 });
+        document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+        // Background Aura Mouse Movement
+        const auras = document.querySelectorAll('.aura');
+        window.addEventListener('mousemove', (e) => {
+            const x = (e.clientX / window.innerWidth - 0.5) * 30;
+            const y = (e.clientY / window.innerHeight - 0.5) * 30;
+            auras.forEach((aura, index) => {
+                const speed = (index + 1) * 0.3;
+                aura.style.transform = `translate(${x * speed}px, ${y * speed}px)`;
+            });
+        });
+
+        // Iframe Loading Logic
+        const iframe = document.getElementById('vizIframe');
+        const loader = document.getElementById('loader');
+
+        iframe.onload = function() {
+            setTimeout(() => {
+                loader.style.opacity = '0';
+                setTimeout(() => {
+                    loader.style.display = 'none';
+                }, 500);
+            }, 1500);
+        };
+
+        // --- RESIZER LOGIC ---
+        const resizer = document.getElementById('resizer');
+        const leftPanel = document.getElementById('left-panel');
+        const container = document.getElementById('main-layout');
+        let isResizing = false;
+
+        const onMouseDown = (e) => {
+            isResizing = true;
+            document.body.style.cursor = 'col-resize';
+            resizer.classList.add('resizing');
+            
+            document.addEventListener('mousemove', onMouseMove);
+            document.addEventListener('mouseup', onMouseUp);
+        };
+
+        const onMouseMove = (e) => {
+            if (!isResizing) return;
+            
+            // Calculate percentage width for left panel
+            const containerWidth = container.getBoundingClientRect().width;
+            const newLeftWidth = (e.clientX / containerWidth) * 100;
+            
+            // Set limits (min 20%, max 60%)
+            if (newLeftWidth > 20 && newLeftWidth < 60) {
+                leftPanel.style.width = `${newLeftWidth}%`;
+            }
+        };
+
+        const onMouseUp = () => {
+            isResizing = false;
+            document.body.style.removeProperty('cursor');
+            resizer.classList.remove('resizing');
+            
+            document.removeEventListener('mousemove', onMouseMove);
+            document.removeEventListener('mouseup', onMouseUp);
+        };
+
+        resizer.addEventListener('mousedown', onMouseDown);
+
+        // Reset on window resize if moving to mobile
+        window.addEventListener('resize', () => {
+            if (window.innerWidth < 1024) {
+                leftPanel.style.width = '';
+            }
+        });
+
+    </script>
+</body>
+</html>
