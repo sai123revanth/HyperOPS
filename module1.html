@@ -232,7 +232,8 @@
         <main id="main-layout" class="w-full max-w-[98rem] mx-auto flex flex-col lg:flex-row gap-4 lg:gap-0 flex-grow min-h-0 reveal active">
             
             <!-- LEFT PANEL: Module Info -->
-            <aside id="left-panel" class="lg:w-[25%] flex flex-col gap-4 h-full overflow-hidden shrink-0">
+            <!-- FIXED: Changed h-full to h-[35%] lg:h-full to prevent taking 100% height on mobile -->
+            <aside id="left-panel" class="lg:w-[25%] flex flex-col gap-4 h-[35%] lg:h-full overflow-hidden shrink-0">
                 
                 <!-- BRANDING HEADER -->
                 <div class="glass-panel rounded-2xl p-5 flex items-center gap-4 shrink-0 shadow-lg shadow-emerald-900/20">
@@ -307,7 +308,8 @@
             <div id="resizer" class="resizer" title="Drag to resize"></div>
 
             <!-- RIGHT PANEL: Streamlit Embed -->
-            <section id="right-panel" class="flex-1 min-w-0 h-full overflow-hidden relative">
+            <!-- FIXED: Changed h-full to h-auto lg:h-full so flex-1 can handle remaining height on mobile -->
+            <section id="right-panel" class="flex-1 min-w-0 h-auto lg:h-full overflow-hidden relative">
                 
                 <!-- Status (No Slider) -->
                 <div class="absolute top-4 right-4 z-20">
