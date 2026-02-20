@@ -361,7 +361,7 @@ def main():
         date_range = st.date_input("Analysis Period", value=(min_date, max_date), min_value=min_date, max_value=max_date)
     with col_nav2:
         st.caption("Engine Version: v7.0 (Floating Ecopay AI Edition)")
-        st.caption("AI Status: Groq Llama-3.1 Online 🟢")
+        st.caption("AI Status: Groq Llama-3.3 Online 🟢")
 
     # --- Data Processing ---
     if len(date_range) == 2:
@@ -612,7 +612,7 @@ def main():
     st.markdown("<br><br><br><br><br>", unsafe_allow_html=True) # Extra padding for floating button
 
     # -------------------------------------------------------------------------
-    # SECTION 6: FLOATING INTELLIGENT GROQ AI
+    # SECTION 6: FLOATING MULTILINGUAL GROQ AI
     # -------------------------------------------------------------------------
     st.markdown("## 🤖 6. Intelligent Ecopay AI")
     st.markdown("Your personal RAG (Retrieval-Augmented Generation) Sustainability Advisor has been transformed into a **Modern Floating Circular Logo**! Look at the **bottom-left** of your screen to interact with Ecopay AI.")
@@ -620,7 +620,7 @@ def main():
     st.markdown("""
     <div class="explainer-box">
         <div class="explainer-title">💡 Hackathon UI/UX Feature: Floating Context-Aware Ecopay AI</div>
-        We didn't just build a chatbot; we built an embedded AI RAG agent. We feed it your exact live data, footprint scores, and worst habits seamlessly in the background. Clicking the floating circular logo in the bottom-left utilizes the blazing-fast <b>Groq llama-3.1-8b-instant</b> engine to instantly recognize hidden patterns and prescribe money-saving actions based on YOUR exact dataset.
+        We didn't just build a chatbot; we built an embedded AI RAG agent. We feed it your exact live data, footprint scores, and worst habits seamlessly in the background. Clicking the floating circular logo in the bottom-left utilizes the blazing-fast <b>Groq llama-3.3-70b-versatile</b> engine to instantly recognize hidden patterns and prescribe money-saving actions based on YOUR exact dataset, fully supporting <b>all regional Indian languages</b> natively.
     </div>
     """, unsafe_allow_html=True)
 
@@ -642,24 +642,25 @@ def main():
     Instructions for your response:
     1. Be concise, highly professional, and encouraging.
     2. Speak in a consultative tone.
-    3. You MUST structure your response with these exact headers if asked to analyze the data:
+    3. You MUST structure your response with these exact headers if asked to analyze the data (translate these headers if speaking in a regional language):
        - 🔍 **Hidden Pattern Recognized:** (Explain a trend in their data)
        - 🚀 **Prescriptive Action Plan:** (Give 2 highly specific actions to reduce footprint and save money)
        - 💰 **Estimated Financial & Carbon Savings:** (Estimate what they will save if they follow your advice)
     4. Do not output raw markdown tables unless explicitly asked.
+    5. MULTILINGUAL INDIAN SUPPORT (CRITICAL): You MUST support all regional languages in India (Hindi, Tamil, Telugu, Kannada, Malayalam, Bengali, Marathi, Gujarati, etc.). Autodetect the language used by the user and reply ENTIRELY in that exact same language while maintaining professional ESG terminology and accurate data insights.
     """
 
     # Ensure session state for chat exists
     if "messages" not in st.session_state:
         st.session_state.messages = [
-            {"role": "assistant", "content": f"Hello! I am Ecopay AI. I've successfully ingested your {len(filtered_df)} transactions. Tell me to uncover your **Hidden Patterns** or generate a **Prescriptive Action Plan** to begin!"}
+            {"role": "assistant", "content": f"Hello! I am Ecopay AI. I've successfully ingested your {len(filtered_df)} transactions.\n\n🌍 **I support all Indian languages (हिंदी, தமிழ், తెలుగు, বাংলা, मराठी, etc.)!**\n\nAsk me in your preferred language to uncover your **Hidden Patterns** or generate a **Prescriptive Action Plan** to begin!"}
         ]
 
     # --- The Floating Popover Interface ---
     # Passing just an emoji creates the perfect circular logo based on our CSS
     with st.popover("🌿"):
         st.markdown("### 🤖 Ecopay AI")
-        st.caption("Powered by Groq `llama-3.1-8b-instant`")
+        st.caption("Powered by Groq `llama-3.3-70b-versatile`")
         
         # Fixed height scrollable container for chat history
         chat_container = st.container(height=350)
@@ -695,7 +696,7 @@ def main():
                     with st.spinner("Analyzing deep matrix trends via Groq..."):
                         chat_completion = client.chat.completions.create(
                             messages=messages_payload,
-                            model="llama-3.1-8b-instant", # The currently supported model
+                            model="llama-3.3-70b-versatile", # Upgraded to the highly capable, multilingual supported model
                             temperature=0.7,
                             max_tokens=1024,
                         )
