@@ -238,9 +238,9 @@
         
         <!-- ECOPAY Voice AI Top Bar (NEW ADDITION) -->
         <div class="w-full max-w-[98rem] mx-auto mb-4 shrink-0 reveal active">
-            <div class="glass-panel rounded-2xl p-3 px-5 flex items-center justify-between shadow-lg shadow-emerald-900/20 border border-emerald-500/30 bg-gradient-to-r from-emerald-900/20 to-transparent flex-wrap gap-3">
+            <div class="glass-panel rounded-2xl p-3 px-5 flex items-center justify-between shadow-lg shadow-emerald-900/20 border border-emerald-500/30 bg-gradient-to-r from-emerald-900/20 to-transparent">
                 <div class="flex items-center gap-4">
-                    <button id="voice-btn" class="w-10 h-10 rounded-full bg-emerald-500 hover:bg-emerald-400 flex items-center justify-center text-black transition-all hover:scale-105 active:scale-95 shadow-[0_0_15px_rgba(16,185,129,0.3)] shrink-0">
+                    <button id="voice-btn" class="w-10 h-10 rounded-full bg-emerald-500 hover:bg-emerald-400 flex items-center justify-center text-black transition-all hover:scale-105 active:scale-95 shadow-[0_0_15px_rgba(16,185,129,0.3)]">
                         <i id="mic-icon" data-lucide="mic" class="w-5 h-5"></i>
                     </button>
                     <div>
@@ -250,19 +250,8 @@
                         <p id="voice-status" class="text-[10px] text-emerald-400 tracking-wider">Tap mic to speak your command...</p>
                     </div>
                 </div>
-                
-                <div class="flex-grow flex items-center justify-end gap-3 w-full sm:w-auto mt-2 sm:mt-0">
-                    <div id="voice-transcript" class="text-xs sm:text-sm text-slate-300 italic truncate text-right flex-grow">
-                        <!-- AI Transcript Appears Here -->
-                    </div>
-                    
-                    <!-- Fallback Text Input -->
-                    <form id="voice-fallback-form" class="relative flex items-center shrink-0 w-full sm:w-64">
-                        <input type="text" id="voice-fallback-input" placeholder="Or type command..." autocomplete="off" class="w-full bg-black/50 border border-white/10 rounded-full py-1.5 pl-4 pr-8 text-xs text-white placeholder-slate-400 focus:outline-none focus:border-emerald-500/50 focus:ring-1 focus:ring-emerald-500/50 transition-all shadow-inner">
-                        <button type="submit" class="absolute right-1 w-6 h-6 bg-emerald-500/20 hover:bg-emerald-500/40 rounded-full flex items-center justify-center text-emerald-400 transition-all">
-                            <i data-lucide="send" class="w-3 h-3 ml-0.5"></i>
-                        </button>
-                    </form>
+                <div id="voice-transcript" class="flex-grow text-right text-sm text-slate-300 italic px-4 truncate max-w-[50%]">
+                    <!-- AI Transcript Appears Here -->
                 </div>
             </div>
         </div>
@@ -628,8 +617,8 @@
                 lucide.createIcons();
             };
 
-            // Extracted logic for processing text/voice
-            async function processAICommand(transcript) {
+            recognition.onresult = async (event) => {
+                const transcript = event.results[0][0].transcript;
                 voiceTranscript.textContent = `You: "${transcript}"`;
                 voiceStatus.textContent = "Thinking...";
 
@@ -666,25 +655,7 @@
                     voiceStatus.textContent = "Tap mic to speak...";
                     speak("Sorry, I couldn't reach the AI server.");
                 }
-            }
-
-            recognition.onresult = (event) => {
-                const transcript = event.results[0][0].transcript;
-                processAICommand(transcript);
             };
-
-            // Fallback Text Input Logic
-            const voiceFallbackForm = document.getElementById('voice-fallback-form');
-            const voiceFallbackInput = document.getElementById('voice-fallback-input');
-
-            voiceFallbackForm.addEventListener('submit', (e) => {
-                e.preventDefault();
-                const text = voiceFallbackInput.value.trim();
-                if (!text) return;
-                
-                voiceFallbackInput.value = ''; // Clear input
-                processAICommand(text); // Reuse the exact same backend logic
-            });
         });
     </script>
 
