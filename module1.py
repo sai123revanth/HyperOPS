@@ -623,7 +623,7 @@ def main():
                     with st.spinner("Analyzing deep matrix trends via Groq..."):
                         chat_completion = client.chat.completions.create(
                             messages=messages_payload,
-                            model="llama3-8b-8192", # Highly capable, blazing fast model
+                            model="llama-3.1-8b-instant", # Updated to a currently supported model
                             temperature=0.7,
                             max_tokens=1024,
                         )
