@@ -7,6 +7,11 @@ from datetime import datetime, timedelta
 import os
 from groq import Groq
 
+# Voice / TTS Imports added to enable the AI to speak
+from gtts import gTTS
+import io
+import re
+
 # -----------------------------------------------------------------------------
 # 1. PAGE CONFIGURATION & STYLING
 # -----------------------------------------------------------------------------
@@ -160,6 +165,36 @@ st.markdown("""
     }
 </style>
 """, unsafe_allow_html=True)
+
+
+# -----------------------------------------------------------------------------
+# 1.5. VOICE & TEXT-TO-SPEECH HELPERS
+# -----------------------------------------------------------------------------
+def get_language_code(text):
+    """Detects the language script to provide accurate regional pronunciation."""
+    if re.search(r'[\u0900-\u097F]', text): return 'hi' # Hindi/Marathi/Sanskrit
+    if re.search(r'[\u0980-\u09FF]', text): return 'bn' # Bengali
+    if re.search(r'[\u0A80-\u0AFF]', text): return 'gu' # Gujarati
+    if re.search(r'[\u0B80-\u0BFF]', text): return 'ta' # Tamil
+    if re.search(r'[\u0C00-\u0C7F]', text): return 'te' # Telugu
+    if re.search(r'[\u0C80-\u0CFF]', text): return 'kn' # Kannada
+    if re.search(r'[\u0D00-\u0D7F]', text): return 'ml' # Malayalam
+    return 'en' # Default
+
+def generate_voice(text):
+    """Converts AI response text into an audio byte stream for playback."""
+    try:
+        # Clean text for better speech synthesis (remove markdown)
+        clean_text = text.replace('*', '').replace('#', '').replace('_', '')
+        lang = get_language_code(clean_text)
+        tts = gTTS(text=clean_text, lang=lang, slow=False)
+        fp = io.BytesIO()
+        tts.write_to_fp(fp)
+        fp.seek(0)
+        return fp.getvalue()
+    except Exception as e:
+        print(f"TTS Error: {e}")
+        return None
 
 # -----------------------------------------------------------------------------
 # 2. DATA PROCESSING & EMISSION LOGIC (The "Engine")
@@ -660,24 +695,23 @@ def main():
     # Passing just an emoji creates the perfect circular logo based on our CSS
     with st.popover("🌿"):
         st.markdown("### 🤖 Ecopay AI")
-        st.caption("AI Context Engine: Active & Secured 🟢")
+        st.caption("AI Context Engine & Voice Synth: Active 🟢")
         
         # Fixed height scrollable container for chat history
         chat_container = st.container(height=350)
         
-        with chat_container:
-            for msg in st.session_state.messages:
-                if msg["role"] == "user":
-                    st.markdown(f"<div class='user-bubble'>👤 <b>You:</b><br>{msg['content']}</div>", unsafe_allow_html=True)
-                else:
-                    st.markdown(f"<div class='ai-bubble'>🤖 <b>Ecopay AI:</b><br>{msg['content']}</div>", unsafe_allow_html=True)
+        # Placeholder to ensure audio is rendered in the correct position
+        audio_container = st.empty()
 
         # Input form to interact with the LLM
         with st.form("chat_form", clear_on_submit=True):
             user_input = st.text_input("Ask me to analyze hidden trends or prescribe actions...")
             submitted = st.form_submit_button("Send to Ecopay AI 🚀")
 
+        # Process AI generation BEFORE rendering the chat history
+        # This prevents the need for st.rerun(), keeping the popover OPEN natively.
         if submitted and user_input:
+            st.session_state.latest_audio = None # Clear old audio so it doesn't replay randomly
             st.session_state.messages.append({"role": "user", "content": user_input})
             
             try:
@@ -702,10 +736,27 @@ def main():
                         )
                         response = chat_completion.choices[0].message.content
                         st.session_state.messages.append({"role": "assistant", "content": response})
-                        st.rerun() # Refresh to show new messages in the popover
+
+                    with st.spinner("Generating Voice Response..."):
+                        audio_bytes = generate_voice(response)
+                        if audio_bytes:
+                            st.session_state.latest_audio = audio_bytes
 
             except Exception as e:
                 st.error(f"Groq Integration Error: {str(e)}")
+
+        # Render chat history AFTER logic so we don't need a hard rerun
+        with chat_container:
+            for msg in st.session_state.messages:
+                if msg["role"] == "user":
+                    st.markdown(f"<div class='user-bubble'>👤 <b>You:</b><br>{msg['content']}</div>", unsafe_allow_html=True)
+                else:
+                    st.markdown(f"<div class='ai-bubble'>🤖 <b>Ecopay AI:</b><br>{msg['content']}</div>", unsafe_allow_html=True)
+
+        # --- Voice Playback Component ---
+        with audio_container:
+            if st.session_state.get("latest_audio"):
+                st.audio(st.session_state.latest_audio, format="audio/mp3", autoplay=True)
 
 if __name__ == "__main__":
     main()
