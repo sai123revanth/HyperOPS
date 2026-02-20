@@ -1,21 +1,22 @@
 /**
- * ECOPAY Voice AI Backend handler 
- * Place this file in your /api folder (e.g., /api/voice.js) for Vercel deployment.
+ * ECOPAY Voice AI Backend handler (/api/voice)
  * Connects to GitHub Models via the Phi-4-multimodal-instruct model.
+ * Handles voice transcriptions and fallback text, returning a reply and a navigation route.
  */
 
 export default async function handler(req, res) {
-    // Only allow POST requests for processing transcriptions
+    // Only allow POST requests
     if (req.method !== 'POST') {
         return res.status(405).json({ error: 'Method not allowed' });
     }
 
     const { text } = req.body;
     
-    // Check for standard GitHub environment variables in Vercel
-    const token = process.env.GITHUB_TOKEN || process.env.GITHUB_API_KEY; 
+    // Check for GitHub token in Vercel environment variables
+    const token = process.env.GITHUB_TOKEN; 
 
     if (!token) {
+        console.error("Missing GITHUB_TOKEN environment variable.");
         return res.status(500).json({ error: 'GitHub API token not configured.' });
     }
 
@@ -49,19 +50,19 @@ export default async function handler(req, res) {
                         content: text
                     }
                 ],
-                temperature: 0.2, // Low temperature for consistent JSON routing
+                temperature: 0.1, // Low temperature for highly consistent JSON output
                 max_tokens: 150
             })
         });
 
         if (!response.ok) {
-            throw new Error(`GitHub API error: ${response.statusText}`);
+            throw new Error(`GitHub API error: ${response.status} - ${response.statusText}`);
         }
 
         const data = await response.json();
         const aiMessage = data.choices[0].message.content;
         
-        // Clean the response in case the model returns markdown code blocks (e.g. ```json ... ```)
+        // Clean the response in case the model wraps the JSON in markdown blocks (e.g. ```json ... ```)
         const cleanedMessage = aiMessage.replace(/```json/g, '').replace(/```/g, '').trim();
         const parsedData = JSON.parse(cleanedMessage);
 
@@ -70,7 +71,7 @@ export default async function handler(req, res) {
     } catch (error) {
         console.error('Voice AI Backend Error:', error);
         return res.status(500).json({ 
-            reply: 'Sorry, I encountered an error connecting to the Phi-4 model. Please try again later.', 
+            reply: 'Sorry, I encountered an error connecting to the AI model. Please try again later.', 
             navigate: "null" 
         });
     }
