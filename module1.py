@@ -4,6 +4,8 @@ import plotly.express as px
 import plotly.graph_objects as go
 import numpy as np
 from datetime import datetime, timedelta
+import os
+from groq import Groq
 
 # -----------------------------------------------------------------------------
 # 1. PAGE CONFIGURATION & STYLING
@@ -293,8 +295,8 @@ def main():
         max_date = data_df['Date'].max()
         date_range = st.date_input("Analysis Period", value=(min_date, max_date), min_value=min_date, max_value=max_date)
     with col_nav2:
-        st.caption("Engine Version: v4.0 (Hackathon Edition)")
-        st.caption("AI Status: Online 🟢")
+        st.caption("Engine Version: v5.0 (Groq AI Copilot Edition)")
+        st.caption("AI Status: Groq Engine Online 🟢")
 
     # --- Data Processing ---
     if len(date_range) == 2:
@@ -543,6 +545,95 @@ def main():
     """, unsafe_allow_html=True)
 
     st.markdown("<br><br><br>", unsafe_allow_html=True)
+
+    # -------------------------------------------------------------------------
+    # SECTION 6: INTELLIGENT GROQ AI COPILOT (NEW HACKATHON FEATURE)
+    # -------------------------------------------------------------------------
+    st.markdown("## 🤖 6. Ecopay Copilot (Powered by Groq AI)")
+    st.markdown("Your personal AI Sustainability Advisor. It deeply analyzes your temporal trends, spending patterns, and hidden carbon anomalies to give you highly personalized advice.")
+
+    st.markdown("""
+    <div class="explainer-box">
+        <div class="explainer-title">💡 Simple English Explanation: The Groq Copilot</div>
+        This isn't just a regular chatbot. It is a <b>Context-Aware RAG (Retrieval-Augmented Generation) Assistant</b>. We feed it your exact live data, footprint scores, and worst habits in the background. When you ask a question, it uses the blazing-fast Groq engine to instantly give you personalized, data-driven advice on how to save money and reduce emissions.
+    </div>
+    """, unsafe_allow_html=True)
+
+    # --- Context Generation for AI ---
+    # We feed the engine's data directly to Groq to make it a true, context-aware Chatbot.
+    top_items = filtered_df.nlargest(5, 'Carbon_Footprint_kg')[['Category', 'Note', 'Carbon_Footprint_kg']].to_dict(orient='records')
+    cat_summary = filtered_df.groupby('Category')['Carbon_Footprint_kg'].sum().to_dict()
+    
+    system_context = f"""
+    You are 'Ecopay Copilot', an elite, highly intelligent Environmental, Social, and Governance (ESG) advisor.
+    You are helping the user reduce their carbon footprint while saving money.
+    
+    Here is the user's current live data from the Ecopay Engine:
+    - Overall Eco-Score: {avg_score:.0f}/100 (100 is perfect)
+    - Total Carbon Footprint: {total_carbon:.2f} kg CO2e
+    - Total Money Spent: ₹{filtered_df['Amount'].sum():,.0f}
+    - Category Breakdown (kg CO2e): {cat_summary}
+    - Top 5 Most Polluting Transactions: {top_items}
+    
+    Instructions:
+    1. Be concise, professional, and encouraging.
+    2. Identify hidden trends (e.g., if a specific category is draining their score).
+    3. Provide actionable, real-world steps they can take today to reduce their carbon and save INR.
+    4. Speak in a natural, consultative tone. Do NOT output raw markdown tables unless explicitly asked.
+    """
+
+    # Ensure session state for chat exists
+    if "messages" not in st.session_state:
+        st.session_state.messages = [
+            {"role": "assistant", "content": f"Hello! I am your Ecopay Groq Copilot. I've just analyzed your {len(filtered_df)} transactions. Your top emitting category is {top_2_categories[0] if top_2_categories else 'Unknown'}. How can I help you optimize your footprint and uncover hidden trends today?"}
+        ]
+
+    # Display Chat History
+    for msg in st.session_state.messages:
+        with st.chat_message(msg["role"]):
+            st.markdown(msg["content"])
+
+    # Chat Input
+    if prompt := st.chat_input("Ask the Groq Copilot for deep trend analysis or reduction strategies..."):
+        st.session_state.messages.append({"role": "user", "content": prompt})
+        with st.chat_message("user"):
+            st.markdown(prompt)
+
+        with st.chat_message("assistant"):
+            try:
+                # Dynamically retrieve the API key from wherever you defined it (globals, locals, secrets, or env)
+                api_key = None
+                if 'Groq_API' in globals():
+                    api_key = globals()['Groq_API']
+                elif 'Groq_API' in locals():
+                    api_key = locals()['Groq_API']
+                else:
+                    api_key = st.secrets.get("Groq_API", os.environ.get("Groq_API"))
+
+                if not api_key:
+                    st.error("⚠️ Groq API key not found. Please ensure your 'Groq_API' variable is defined properly.")
+                else:
+                    client = Groq(api_key=api_key)
+                    
+                    # Prepare message payload
+                    messages_payload = [{"role": "system", "content": system_context}]
+                    # Append recent messages to maintain context without overloading tokens
+                    messages_payload.extend([{"role": m["role"], "content": m["content"]} for m in st.session_state.messages[-5:]])
+
+                    with st.spinner("Analyzing deep matrix trends via Groq..."):
+                        chat_completion = client.chat.completions.create(
+                            messages=messages_payload,
+                            model="llama3-8b-8192", # Highly capable, blazing fast model
+                            temperature=0.7,
+                            max_tokens=1024,
+                        )
+                        response = chat_completion.choices[0].message.content
+                        st.markdown(response)
+                        st.session_state.messages.append({"role": "assistant", "content": response})
+
+            except Exception as e:
+                st.error(f"Groq Integration Error: {str(e)}")
+                st.info("💡 Ensure `groq` is installed (`pip install groq`) and your API key is valid.")
 
 if __name__ == "__main__":
     main()
