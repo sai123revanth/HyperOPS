@@ -361,7 +361,7 @@ def main():
         date_range = st.date_input("Analysis Period", value=(min_date, max_date), min_value=min_date, max_value=max_date)
     with col_nav2:
         st.caption("Engine Version: v7.0 (Floating Ecopay AI Edition)")
-        st.caption("AI Status: Groq Llama-3.3 Online 🟢")
+        st.caption("AI Status: Ecopay Intelligence Online 🟢")
 
     # --- Data Processing ---
     if len(date_range) == 2:
@@ -660,7 +660,7 @@ def main():
     # Passing just an emoji creates the perfect circular logo based on our CSS
     with st.popover("🌿"):
         st.markdown("### 🤖 Ecopay AI")
-        st.caption("Powered by Groq `llama-3.3-70b-versatile`")
+        st.caption("AI Context Engine: Active & Secured 🟢")
         
         # Fixed height scrollable container for chat history
         chat_container = st.container(height=350)
