@@ -94,32 +94,37 @@ st.markdown("""
     }
 
     /* -------------------------------------------------------------------------
-       FLOATING AI COPILOT CSS (HACKATHON WINNING UI)
+       FLOATING ECOPAY AI CSS (HACKATHON WINNING UI)
        ------------------------------------------------------------------------- */
     /* Target the stPopover button specifically to make it a floating logo */
     div[data-testid="stPopover"] {
         position: fixed !important;
-        bottom: 30px !important;
-        left: 30px !important;
+        bottom: 40px !important;
+        left: 40px !important;
         z-index: 9999 !important;
     }
     
-    /* Style the actual floating button */
+    /* Style the actual floating button to be a perfect circular logo */
     div[data-testid="stPopover"] > button {
         background: linear-gradient(135deg, #10b981 0%, #047857 100%) !important;
         color: white !important;
-        border-radius: 50px !important;
-        padding: 15px 30px !important;
+        border-radius: 50% !important; /* Makes it a perfect circle */
+        width: 75px !important; /* Fixed width for circle */
+        height: 75px !important; /* Fixed height for circle */
+        padding: 0 !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
         font-weight: 800 !important;
-        font-size: 1.1rem !important;
-        border: 2px solid rgba(255, 255, 255, 0.2) !important;
+        font-size: 2.5rem !important; /* Large logo icon size */
+        border: 3px solid rgba(255, 255, 255, 0.3) !important;
         box-shadow: 0 10px 30px rgba(16, 185, 129, 0.6) !important;
         transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1) !important;
     }
     
     /* Floating button hover effect */
     div[data-testid="stPopover"] > button:hover {
-        transform: scale(1.05) translateY(-5px) !important;
+        transform: scale(1.1) translateY(-5px) !important;
         box-shadow: 0 15px 35px rgba(16, 185, 129, 0.8) !important;
         background: linear-gradient(135deg, #34d399 0%, #059669 100%) !important;
     }
@@ -355,7 +360,7 @@ def main():
         max_date = data_df['Date'].max()
         date_range = st.date_input("Analysis Period", value=(min_date, max_date), min_value=min_date, max_value=max_date)
     with col_nav2:
-        st.caption("Engine Version: v6.0 (Floating Groq Edition)")
+        st.caption("Engine Version: v7.0 (Floating Ecopay AI Edition)")
         st.caption("AI Status: Groq Llama-3.1 Online 🟢")
 
     # --- Data Processing ---
@@ -607,15 +612,15 @@ def main():
     st.markdown("<br><br><br><br><br>", unsafe_allow_html=True) # Extra padding for floating button
 
     # -------------------------------------------------------------------------
-    # SECTION 6: FLOATING INTELLIGENT GROQ AI COPILOT
+    # SECTION 6: FLOATING INTELLIGENT GROQ AI
     # -------------------------------------------------------------------------
-    st.markdown("## 🤖 6. Intelligent AI Copilot")
-    st.markdown("Your personal RAG (Retrieval-Augmented Generation) Sustainability Advisor has been transformed into a **Modern Floating Action Button**! Look at the **bottom-left** of your screen to interact with the AI.")
+    st.markdown("## 🤖 6. Intelligent Ecopay AI")
+    st.markdown("Your personal RAG (Retrieval-Augmented Generation) Sustainability Advisor has been transformed into a **Modern Floating Circular Logo**! Look at the **bottom-left** of your screen to interact with Ecopay AI.")
 
     st.markdown("""
     <div class="explainer-box">
-        <div class="explainer-title">💡 Hackathon UI/UX Feature: Floating Context-Aware Copilot</div>
-        We didn't just build a chatbot; we built an embedded AI RAG agent. We feed it your exact live data, footprint scores, and worst habits seamlessly in the background. Clicking the floating logo in the bottom-left utilizes the blazing-fast <b>Groq llama-3.1-8b-instant</b> engine to instantly recognize hidden patterns and prescribe money-saving actions based on YOUR exact dataset.
+        <div class="explainer-title">💡 Hackathon UI/UX Feature: Floating Context-Aware Ecopay AI</div>
+        We didn't just build a chatbot; we built an embedded AI RAG agent. We feed it your exact live data, footprint scores, and worst habits seamlessly in the background. Clicking the floating circular logo in the bottom-left utilizes the blazing-fast <b>Groq llama-3.1-8b-instant</b> engine to instantly recognize hidden patterns and prescribe money-saving actions based on YOUR exact dataset.
     </div>
     """, unsafe_allow_html=True)
 
@@ -624,7 +629,7 @@ def main():
     cat_summary = filtered_df.groupby('Category')['Carbon_Footprint_kg'].sum().to_dict()
     
     system_context = f"""
-    You are 'Ecopay Copilot', an elite, highly intelligent Environmental, Social, and Governance (ESG) advisor.
+    You are 'Ecopay AI', an elite, highly intelligent Environmental, Social, and Governance (ESG) advisor.
     Your absolute primary goal is to identify HIDDEN PATTERNS from the user's data and prescribe actionable solutions.
     
     Here is the user's live Matrix Data:
@@ -647,12 +652,13 @@ def main():
     # Ensure session state for chat exists
     if "messages" not in st.session_state:
         st.session_state.messages = [
-            {"role": "assistant", "content": f"Hello! I am your Ecopay Groq Copilot. I've successfully ingested your {len(filtered_df)} transactions. Tell me to uncover your **Hidden Patterns** or generate a **Prescriptive Action Plan** to begin!"}
+            {"role": "assistant", "content": f"Hello! I am Ecopay AI. I've successfully ingested your {len(filtered_df)} transactions. Tell me to uncover your **Hidden Patterns** or generate a **Prescriptive Action Plan** to begin!"}
         ]
 
     # --- The Floating Popover Interface ---
-    with st.popover("🤖 Ecopay AI Copilot"):
-        st.markdown("### 🤖 Ecopay AI Copilot")
+    # Passing just an emoji creates the perfect circular logo based on our CSS
+    with st.popover("🌿"):
+        st.markdown("### 🤖 Ecopay AI")
         st.caption("Powered by Groq `llama-3.1-8b-instant`")
         
         # Fixed height scrollable container for chat history
@@ -663,12 +669,12 @@ def main():
                 if msg["role"] == "user":
                     st.markdown(f"<div class='user-bubble'>👤 <b>You:</b><br>{msg['content']}</div>", unsafe_allow_html=True)
                 else:
-                    st.markdown(f"<div class='ai-bubble'>🤖 <b>Copilot:</b><br>{msg['content']}</div>", unsafe_allow_html=True)
+                    st.markdown(f"<div class='ai-bubble'>🤖 <b>Ecopay AI:</b><br>{msg['content']}</div>", unsafe_allow_html=True)
 
         # Input form to interact with the LLM
         with st.form("chat_form", clear_on_submit=True):
             user_input = st.text_input("Ask me to analyze hidden trends or prescribe actions...")
-            submitted = st.form_submit_button("Send to Copilot 🚀")
+            submitted = st.form_submit_button("Send to Ecopay AI 🚀")
 
         if submitted and user_input:
             st.session_state.messages.append({"role": "user", "content": user_input})
