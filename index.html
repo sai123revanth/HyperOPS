@@ -207,6 +207,22 @@
         .resizer:hover, .resizer.resizing {
             background-color: rgba(16, 185, 129, 0.5); /* Emerald 500 */
         }
+
+        /* Chatbot Typing Animation */
+        .typing-dot {
+            width: 6px;
+            height: 6px;
+            background-color: #34d399;
+            border-radius: 50%;
+            display: inline-block;
+            animation: typing 1.4s infinite ease-in-out both;
+        }
+        .typing-dot:nth-child(1) { animation-delay: -0.32s; }
+        .typing-dot:nth-child(2) { animation-delay: -0.16s; }
+        @keyframes typing {
+            0%, 80%, 100% { transform: scale(0); opacity: 0.5; }
+            40% { transform: scale(1); opacity: 1; }
+        }
     </style>
 </head>
 <body>
@@ -395,13 +411,65 @@
         </main>
     </div>
 
+    <!-- AI Chatbot UI System -->
+    <!-- Chat Window (Hidden by default) -->
+    <div id="chat-window" class="fixed bottom-24 right-6 w-[340px] sm:w-[380px] h-[32rem] max-h-[75vh] glass-panel rounded-3xl flex flex-col shadow-2xl shadow-emerald-900/50 z-50 transition-all duration-300 opacity-0 translate-y-4 pointer-events-none origin-bottom-right">
+        
+        <!-- Header -->
+        <div class="p-4 border-b border-white/10 flex justify-between items-center shrink-0 bg-black/40 rounded-t-3xl backdrop-blur-xl">
+            <div class="flex items-center gap-3">
+                <div class="w-9 h-9 rounded-full bg-gradient-to-br from-emerald-600/30 to-teal-500/30 flex items-center justify-center border border-emerald-500/30">
+                    <i data-lucide="bot" class="w-5 h-5 text-emerald-400"></i>
+                </div>
+                <div>
+                    <h3 class="text-sm font-bold text-white tracking-wider flex items-center gap-2">
+                        ECOPAY AI 
+                        <i data-lucide="sparkles" class="w-3 h-3 text-teal-400"></i>
+                    </h3>
+                    <p class="text-[9px] text-emerald-400 uppercase tracking-widest flex items-center gap-1.5 mt-0.5">
+                        <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span> Online
+                    </p>
+                </div>
+            </div>
+            <button id="close-chat" class="text-slate-400 hover:text-white transition-colors p-1.5 rounded-full hover:bg-white/10">
+                <i data-lucide="x" class="w-5 h-5"></i>
+            </button>
+        </div>
+
+        <!-- Messages Area -->
+        <div id="chat-messages" class="flex-grow p-4 overflow-y-auto flex flex-col gap-4 text-sm bg-black/20">
+            <!-- Initial AI Greeting -->
+            <div class="flex gap-2 items-end max-w-[85%]">
+                <div class="w-7 h-7 rounded-full bg-emerald-500/20 flex items-center justify-center shrink-0 border border-emerald-500/30 mb-1">
+                    <i data-lucide="leaf" class="w-3.5 h-3.5 text-emerald-400"></i>
+                </div>
+                <div class="glass-panel p-3 px-4 rounded-2xl rounded-bl-none text-slate-200 text-[13px] leading-relaxed border border-white/10 bg-white/5">
+                    Hello! I'm your ECOPAY AI Assistant. Let's discuss your carbon footprint. How can I help you analyze your impact today?
+                </div>
+            </div>
+        </div>
+
+        <!-- Input Area -->
+        <div class="p-4 border-t border-white/10 shrink-0 bg-black/40 rounded-b-3xl backdrop-blur-xl">
+            <form id="chat-form" class="relative flex items-center">
+                <input type="text" id="chat-input" placeholder="Ask about your emissions..." autocomplete="off" class="w-full bg-black/50 border border-white/10 rounded-full py-3 pl-4 pr-12 text-sm text-white placeholder-slate-400 focus:outline-none focus:border-emerald-500/50 focus:ring-1 focus:ring-emerald-500/50 transition-all shadow-inner">
+                <button type="submit" id="chat-submit" class="absolute right-1.5 w-9 h-9 bg-emerald-500 hover:bg-emerald-400 rounded-full flex items-center justify-center text-black transition-all hover:scale-105 active:scale-95 disabled:opacity-50 disabled:hover:scale-100 disabled:cursor-not-allowed">
+                    <i data-lucide="send" class="w-4 h-4 ml-0.5"></i>
+                </button>
+            </form>
+            <div class="text-[9px] text-center text-slate-500 mt-2 tracking-widest uppercase">
+                Powered by AI • Insights may vary
+            </div>
+        </div>
+    </div>
+
     <!-- AI Chatbot Widget (Bottom Right) -->
-    <div class="fixed bottom-6 right-6 z-50 group cursor-pointer">
+    <div id="chatbot-trigger" class="fixed bottom-6 right-6 z-50 group cursor-pointer">
         <!-- Glow Backdrop -->
         <div class="absolute inset-0 bg-gradient-to-r from-emerald-500 to-teal-500 rounded-full blur-xl opacity-20 group-hover:opacity-40 transition-opacity duration-500"></div>
         
         <!-- Button Container -->
-        <div class="glass-panel relative w-14 h-14 rounded-full flex items-center justify-center border border-white/20 hover:border-white/40 hover:scale-110 transition-all duration-300 overflow-hidden">
+        <div class="glass-panel relative w-14 h-14 rounded-full flex items-center justify-center border border-white/20 hover:border-white/40 hover:scale-110 transition-all duration-300 overflow-hidden shadow-xl shadow-emerald-900/50">
             <!-- Animated Gradient Background -->
             <div class="absolute inset-0 bg-gradient-to-tr from-emerald-600/20 via-teal-600/20 to-lime-600/20 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
             
@@ -410,14 +478,15 @@
         </div>
 
         <!-- Label Tooltip -->
-        <div class="absolute right-full top-1/2 -translate-y-1/2 mr-4 glass-panel px-4 py-2 rounded-xl opacity-0 translate-x-[10px] group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300 pointer-events-none">
-            <div class="flex items-center gap-2 whitespace-nowrap">
+        <div class="absolute right-full top-1/2 -translate-y-1/2 mr-4 glass-panel px-4 py-2 rounded-xl opacity-0 translate-x-[10px] group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300 pointer-events-none whitespace-nowrap">
+            <div class="flex items-center gap-2">
                 <div class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></div>
                 <span class="text-[10px] font-bold uppercase tracking-widest text-white">EcoBot Online</span>
             </div>
         </div>
     </div>
 
+    <!-- Original UI Script -->
     <script>
         lucide.createIcons();
 
@@ -437,6 +506,152 @@
             auras.forEach((aura, index) => {
                 const speed = (index + 1) * 0.3;
                 aura.style.transform = `translate(${x * speed}px, ${y * speed}px)`;
+            });
+        });
+    </script>
+
+    <!-- Chatbot Logic Script -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const chatTrigger = document.getElementById('chatbot-trigger');
+            const chatWindow = document.getElementById('chat-window');
+            const closeChat = document.getElementById('close-chat');
+            const chatForm = document.getElementById('chat-form');
+            const chatInput = document.getElementById('chat-input');
+            const chatMessages = document.getElementById('chat-messages');
+            const submitBtn = document.getElementById('chat-submit');
+
+            let isChatOpen = false;
+            
+            // Toggle Chat Visibility
+            const toggleChat = () => {
+                isChatOpen = !isChatOpen;
+                if (isChatOpen) {
+                    chatWindow.classList.remove('opacity-0', 'translate-y-4', 'pointer-events-none', 'scale-95');
+                    chatWindow.classList.add('scale-100');
+                    setTimeout(() => chatInput.focus(), 300);
+                } else {
+                    chatWindow.classList.add('opacity-0', 'translate-y-4', 'pointer-events-none', 'scale-95');
+                    chatWindow.classList.remove('scale-100');
+                }
+            };
+
+            chatTrigger.addEventListener('click', toggleChat);
+            closeChat.addEventListener('click', toggleChat);
+
+            // Chat UI Builders
+            const appendUserMessage = (text) => {
+                const html = `
+                    <div class="flex gap-2 items-end justify-end w-full">
+                        <div class="bg-emerald-500/20 p-3 px-4 rounded-2xl rounded-br-none text-white text-[13px] leading-relaxed border border-emerald-500/30 max-w-[85%]">
+                            ${text}
+                        </div>
+                    </div>
+                `;
+                chatMessages.insertAdjacentHTML('beforeend', html);
+                scrollToBottom();
+            };
+
+            const appendAIMessage = (text) => {
+                const html = `
+                    <div class="flex gap-2 items-end max-w-[85%]">
+                        <div class="w-7 h-7 rounded-full bg-emerald-500/20 flex items-center justify-center shrink-0 border border-emerald-500/30 mb-1">
+                            <i data-lucide="leaf" class="w-3.5 h-3.5 text-emerald-400"></i>
+                        </div>
+                        <div class="glass-panel p-3 px-4 rounded-2xl rounded-bl-none text-slate-200 text-[13px] leading-relaxed border border-white/10 bg-white/5">
+                            ${text}
+                        </div>
+                    </div>
+                `;
+                chatMessages.insertAdjacentHTML('beforeend', html);
+                lucide.createIcons();
+                scrollToBottom();
+            };
+
+            const showTypingIndicator = () => {
+                const id = 'typing-' + Date.now();
+                const html = `
+                    <div id="${id}" class="flex gap-2 items-end max-w-[85%]">
+                        <div class="w-7 h-7 rounded-full bg-emerald-500/20 flex items-center justify-center shrink-0 border border-emerald-500/30 mb-1">
+                            <i data-lucide="bot" class="w-3.5 h-3.5 text-emerald-400"></i>
+                        </div>
+                        <div class="glass-panel p-4 rounded-2xl rounded-bl-none flex items-center gap-1 border border-white/10 bg-white/5">
+                            <span class="typing-dot"></span>
+                            <span class="typing-dot"></span>
+                            <span class="typing-dot"></span>
+                        </div>
+                    </div>
+                `;
+                chatMessages.insertAdjacentHTML('beforeend', html);
+                lucide.createIcons();
+                scrollToBottom();
+                return id;
+            };
+
+            const removeTypingIndicator = (id) => {
+                const el = document.getElementById(id);
+                if (el) el.remove();
+            };
+
+            const scrollToBottom = () => {
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+            };
+
+            // Gemini API Integration
+            const systemPrompt = `You are ECOPAY AI, a professional, concise sustainability assistant. You help users analyze their carbon footprint based on financial purchases, suggest eco-friendly alternatives, and explain the environmental impact of their spending. Keep responses short, professional, encouraging, and strictly formatted as plain text (no markdown formatting symbols like ** or #). Limit your response to 2-3 sentences.`;
+            const apiKey = ""; // API key is injected by the environment securely at runtime
+
+            async function generateAIResponse(prompt) {
+                const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
+                const payload = {
+                    contents: [{ parts: [{ text: prompt }] }],
+                    systemInstruction: { parts: [{ text: systemPrompt }] }
+                };
+
+                const delays = [1000, 2000, 4000, 8000, 16000];
+                
+                for (let i = 0; i < 5; i++) {
+                    try {
+                        const response = await fetch(url, {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify(payload)
+                        });
+                        
+                        if (!response.ok) throw new Error('Network error');
+                        const data = await response.json();
+                        return data.candidates?.[0]?.content?.parts?.[0]?.text || "I'm having trouble analyzing that right now.";
+                    } catch (error) {
+                        if (i === 4) return "Sorry, I am currently unable to reach the sustainability servers. Please try again later.";
+                        await new Promise(res => setTimeout(res, delays[i]));
+                    }
+                }
+            }
+
+            // Handle Submit
+            chatForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const text = chatInput.value.trim();
+                if (!text) return;
+
+                // UI updates for sending
+                chatInput.value = '';
+                chatInput.disabled = true;
+                submitBtn.disabled = true;
+                
+                appendUserMessage(text);
+                const typingId = showTypingIndicator();
+
+                // Fetch response
+                const response = await generateAIResponse(text);
+                
+                // Cleanup and show response
+                removeTypingIndicator(typingId);
+                appendAIMessage(response);
+                
+                chatInput.disabled = false;
+                submitBtn.disabled = false;
+                chatInput.focus();
             });
         });
     </script>
