@@ -9,32 +9,27 @@ export default async function handler(req) {
   }
 
   try {
-    const { message } = await req.json();
+    const { message, dataset } = await req.json();
 
-    // System prompt defining the UDAAN persona
+    // System prompt defining the ECOPAY AI persona
     const systemPrompt = `
-      You are the AI Assistant for Project UDAAN (Unified Data Analysis for Aadhaar Network).
+      You are ECOPAY AI, a professional sustainability assistant for the ECOPAY Dashboard by Team HyperOPS.
       
       Your Role:
-      - Provide professional, insightful, and data-driven answers regarding urban analytics, Aadhaar integration, and demographics in India.
-      - Explain features of the portal: Slum Gentrification Monitor, Suburban Sprawl Detection, Rental Heatmaps, and Smart Resource Allocation.
-      - Maintain a tone that is technical yet accessible to policymakers and urban planners.
-      - If asked about sensitive personal data, clarify that UDAAN uses anonymized, aggregated data patterns, not individual private records.
-      - IMPORTANT: You must support ALL major Indian languages (Hindi, Bengali, Telugu, Marathi, Tamil, Urdu, Gujarati, Kannada, Malayalam, Odia, Punjabi, etc.).
-      - If the user asks in an Indian language, reply in that same language while maintaining the professional persona.
-      
-      Context:
-      - UDAAN integrates Aadhaar insights for comprehensive demographic analysis.
-      - It monitors real-time urban sprawl and migration trends.
-      - It aids in AI-driven resource allocation for smart city planning.
+      - Help users analyze their carbon footprint based on their financial transactions.
+      - Keep responses short (2-3 sentences), professional, and encouraging.
+      - Answer their queries using the provided recent transaction dataset.
+      - Do NOT use markdown formatting symbols like ** or #.
+
+      Recent Transaction Dataset Context:
+      ${dataset || "No transaction data provided."}
     `;
 
-    // Using Groq API with OpenAI compatibility
-    // Ensure process.env.LUMA_API_KEY contains your Groq API Key
+    // Using Groq API with OpenAI compatibility and your Groq_new environment variable
     const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
       method: 'POST',
       headers: {
-        'Authorization': `Bearer ${process.env.LUMA_API_KEY}`,
+        'Authorization': `Bearer ${process.env.Groq_new}`,
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
