@@ -17,7 +17,7 @@ st.set_page_config(
     initial_sidebar_state="collapsed"
 )
 
-# Custom CSS for a modern, "Eco-FinTech" aesthetic & Explanation Boxes
+# Custom CSS for a modern, "Eco-FinTech" aesthetic, Explanation Boxes, & Floating Chat
 st.markdown("""
 <style>
     /* Main Background & Text */
@@ -74,7 +74,7 @@ st.markdown("""
         border-top: 1px solid rgba(255, 255, 255, 0.1);
     }
     
-    /* New: Simple English Explanation Box styling for Hackathon Judges */
+    /* Simple English Explanation Box styling for Hackathon Judges */
     .explainer-box {
         background-color: rgba(30, 41, 59, 0.6);
         border-left: 4px solid #3b82f6;
@@ -93,6 +93,66 @@ st.markdown("""
         font-size: 1rem;
     }
 
+    /* -------------------------------------------------------------------------
+       FLOATING AI COPILOT CSS (HACKATHON WINNING UI)
+       ------------------------------------------------------------------------- */
+    /* Target the stPopover button specifically to make it a floating logo */
+    div[data-testid="stPopover"] {
+        position: fixed !important;
+        bottom: 30px !important;
+        left: 30px !important;
+        z-index: 9999 !important;
+    }
+    
+    /* Style the actual floating button */
+    div[data-testid="stPopover"] > button {
+        background: linear-gradient(135deg, #10b981 0%, #047857 100%) !important;
+        color: white !important;
+        border-radius: 50px !important;
+        padding: 15px 30px !important;
+        font-weight: 800 !important;
+        font-size: 1.1rem !important;
+        border: 2px solid rgba(255, 255, 255, 0.2) !important;
+        box-shadow: 0 10px 30px rgba(16, 185, 129, 0.6) !important;
+        transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1) !important;
+    }
+    
+    /* Floating button hover effect */
+    div[data-testid="stPopover"] > button:hover {
+        transform: scale(1.05) translateY(-5px) !important;
+        box-shadow: 0 15px 35px rgba(16, 185, 129, 0.8) !important;
+        background: linear-gradient(135deg, #34d399 0%, #059669 100%) !important;
+    }
+    
+    /* Style the popover chat window container */
+    div[data-testid="stPopoverBody"] {
+        background-color: rgba(15, 23, 42, 0.95) !important;
+        backdrop-filter: blur(15px) !important;
+        border: 1px solid #3b82f6 !important;
+        border-radius: 15px !important;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6) !important;
+        width: 450px !important;
+        max-width: 90vw !important;
+    }
+    
+    /* Custom Chat Bubbles */
+    .user-bubble {
+        text-align: right; 
+        background-color: rgba(59,130,246,0.2); 
+        padding: 12px; 
+        border-radius: 12px 12px 0 12px; 
+        margin-bottom: 12px;
+        color: white;
+    }
+    .ai-bubble {
+        text-align: left; 
+        background-color: rgba(16,185,129,0.15); 
+        padding: 12px; 
+        border-radius: 12px 12px 12px 0; 
+        margin-bottom: 12px; 
+        border-left: 4px solid #10b981;
+        color: white;
+    }
 </style>
 """, unsafe_allow_html=True)
 
@@ -295,8 +355,8 @@ def main():
         max_date = data_df['Date'].max()
         date_range = st.date_input("Analysis Period", value=(min_date, max_date), min_value=min_date, max_value=max_date)
     with col_nav2:
-        st.caption("Engine Version: v5.0 (Groq AI Copilot Edition)")
-        st.caption("AI Status: Groq Engine Online 🟢")
+        st.caption("Engine Version: v6.0 (Floating Groq Edition)")
+        st.caption("AI Status: Groq Llama-3.1 Online 🟢")
 
     # --- Data Processing ---
     if len(date_range) == 2:
@@ -333,7 +393,7 @@ def main():
     st.markdown("<br>", unsafe_allow_html=True)
 
     # -------------------------------------------------------------------------
-    # NEW VISUAL: GAUGE CHART & SUNBURST
+    # VISUALS: GAUGE CHART & SUNBURST
     # -------------------------------------------------------------------------
     c1, c2 = st.columns([1, 1.5])
     
@@ -380,7 +440,7 @@ def main():
     st.markdown("---")
 
     # -------------------------------------------------------------------------
-    # NEW VISUAL: SANKEY DIAGRAM & SCATTER PLOT
+    # VISUALS: SANKEY DIAGRAM & SCATTER PLOT
     # -------------------------------------------------------------------------
     st.markdown("## 🕸️ 2. Deep Dive Analytics")
     
@@ -433,7 +493,7 @@ def main():
     st.markdown("---")
 
     # -------------------------------------------------------------------------
-    # NEW VISUAL: TIME SERIES / DAY OF WEEK HEATMAP
+    # TIME SERIES / DAY OF WEEK HEATMAP
     # -------------------------------------------------------------------------
     st.markdown("## 📅 3. Temporal Habits & AI Forecasting")
     
@@ -473,7 +533,7 @@ def main():
     st.markdown("---")
 
     # -------------------------------------------------------------------------
-    # SECTION 4: SIMULATOR & ACTION PLAN
+    # SIMULATOR & ACTION PLAN
     # -------------------------------------------------------------------------
     st.markdown("## 🎛️ 4. Impact Simulator & Action Plan")
     
@@ -526,7 +586,7 @@ def main():
     st.markdown("---")
 
     # -------------------------------------------------------------------------
-    # SECTION 5: CARBON OFFSETTING
+    # CARBON OFFSETTING
     # -------------------------------------------------------------------------
     st.markdown("## 🌳 5. Neutralize Your Impact (Offsetting)")
     trees_needed, offset_cost = engine.calculate_offsets(total_carbon)
@@ -544,96 +604,101 @@ def main():
     </div>
     """, unsafe_allow_html=True)
 
-    st.markdown("<br><br><br>", unsafe_allow_html=True)
+    st.markdown("<br><br><br><br><br>", unsafe_allow_html=True) # Extra padding for floating button
 
     # -------------------------------------------------------------------------
-    # SECTION 6: INTELLIGENT GROQ AI COPILOT (NEW HACKATHON FEATURE)
+    # SECTION 6: FLOATING INTELLIGENT GROQ AI COPILOT
     # -------------------------------------------------------------------------
-    st.markdown("## 🤖 6. Ecopay Copilot (Powered by Groq AI)")
-    st.markdown("Your personal AI Sustainability Advisor. It deeply analyzes your temporal trends, spending patterns, and hidden carbon anomalies to give you highly personalized advice.")
+    st.markdown("## 🤖 6. Intelligent AI Copilot")
+    st.markdown("Your personal RAG (Retrieval-Augmented Generation) Sustainability Advisor has been transformed into a **Modern Floating Action Button**! Look at the **bottom-left** of your screen to interact with the AI.")
 
     st.markdown("""
     <div class="explainer-box">
-        <div class="explainer-title">💡 Simple English Explanation: The Groq Copilot</div>
-        This isn't just a regular chatbot. It is a <b>Context-Aware RAG (Retrieval-Augmented Generation) Assistant</b>. We feed it your exact live data, footprint scores, and worst habits in the background. When you ask a question, it uses the blazing-fast Groq engine to instantly give you personalized, data-driven advice on how to save money and reduce emissions.
+        <div class="explainer-title">💡 Hackathon UI/UX Feature: Floating Context-Aware Copilot</div>
+        We didn't just build a chatbot; we built an embedded AI RAG agent. We feed it your exact live data, footprint scores, and worst habits seamlessly in the background. Clicking the floating logo in the bottom-left utilizes the blazing-fast <b>Groq llama-3.1-8b-instant</b> engine to instantly recognize hidden patterns and prescribe money-saving actions based on YOUR exact dataset.
     </div>
     """, unsafe_allow_html=True)
 
-    # --- Context Generation for AI ---
-    # We feed the engine's data directly to Groq to make it a true, context-aware Chatbot.
+    # --- Setup Context Generation for the Popover AI ---
     top_items = filtered_df.nlargest(5, 'Carbon_Footprint_kg')[['Category', 'Note', 'Carbon_Footprint_kg']].to_dict(orient='records')
     cat_summary = filtered_df.groupby('Category')['Carbon_Footprint_kg'].sum().to_dict()
     
     system_context = f"""
     You are 'Ecopay Copilot', an elite, highly intelligent Environmental, Social, and Governance (ESG) advisor.
-    You are helping the user reduce their carbon footprint while saving money.
+    Your absolute primary goal is to identify HIDDEN PATTERNS from the user's data and prescribe actionable solutions.
     
-    Here is the user's current live data from the Ecopay Engine:
-    - Overall Eco-Score: {avg_score:.0f}/100 (100 is perfect)
+    Here is the user's live Matrix Data:
+    - Overall Eco-Score: {avg_score:.0f}/100 (100 is absolute zero carbon)
     - Total Carbon Footprint: {total_carbon:.2f} kg CO2e
     - Total Money Spent: ₹{filtered_df['Amount'].sum():,.0f}
     - Category Breakdown (kg CO2e): {cat_summary}
     - Top 5 Most Polluting Transactions: {top_items}
     
-    Instructions:
-    1. Be concise, professional, and encouraging.
-    2. Identify hidden trends (e.g., if a specific category is draining their score).
-    3. Provide actionable, real-world steps they can take today to reduce their carbon and save INR.
-    4. Speak in a natural, consultative tone. Do NOT output raw markdown tables unless explicitly asked.
+    Instructions for your response:
+    1. Be concise, highly professional, and encouraging.
+    2. Speak in a consultative tone.
+    3. You MUST structure your response with these exact headers if asked to analyze the data:
+       - 🔍 **Hidden Pattern Recognized:** (Explain a trend in their data)
+       - 🚀 **Prescriptive Action Plan:** (Give 2 highly specific actions to reduce footprint and save money)
+       - 💰 **Estimated Financial & Carbon Savings:** (Estimate what they will save if they follow your advice)
+    4. Do not output raw markdown tables unless explicitly asked.
     """
 
     # Ensure session state for chat exists
     if "messages" not in st.session_state:
         st.session_state.messages = [
-            {"role": "assistant", "content": f"Hello! I am your Ecopay Groq Copilot. I've just analyzed your {len(filtered_df)} transactions. Your top emitting category is {top_2_categories[0] if top_2_categories else 'Unknown'}. How can I help you optimize your footprint and uncover hidden trends today?"}
+            {"role": "assistant", "content": f"Hello! I am your Ecopay Groq Copilot. I've successfully ingested your {len(filtered_df)} transactions. Tell me to uncover your **Hidden Patterns** or generate a **Prescriptive Action Plan** to begin!"}
         ]
 
-    # Display Chat History
-    for msg in st.session_state.messages:
-        with st.chat_message(msg["role"]):
-            st.markdown(msg["content"])
-
-    # Chat Input
-    if prompt := st.chat_input("Ask the Groq Copilot for deep trend analysis or reduction strategies..."):
-        st.session_state.messages.append({"role": "user", "content": prompt})
-        with st.chat_message("user"):
-            st.markdown(prompt)
-
-        with st.chat_message("assistant"):
-            try:
-                # Dynamically retrieve the API key from wherever you defined it (globals, locals, secrets, or env)
-                api_key = None
-                if 'Groq_API' in globals():
-                    api_key = globals()['Groq_API']
-                elif 'Groq_API' in locals():
-                    api_key = locals()['Groq_API']
+    # --- The Floating Popover Interface ---
+    with st.popover("🤖 Ecopay AI Copilot"):
+        st.markdown("### 🤖 Ecopay AI Copilot")
+        st.caption("Powered by Groq `llama-3.1-8b-instant`")
+        
+        # Fixed height scrollable container for chat history
+        chat_container = st.container(height=350)
+        
+        with chat_container:
+            for msg in st.session_state.messages:
+                if msg["role"] == "user":
+                    st.markdown(f"<div class='user-bubble'>👤 <b>You:</b><br>{msg['content']}</div>", unsafe_allow_html=True)
                 else:
-                    api_key = st.secrets.get("Groq_API", os.environ.get("Groq_API"))
+                    st.markdown(f"<div class='ai-bubble'>🤖 <b>Copilot:</b><br>{msg['content']}</div>", unsafe_allow_html=True)
 
+        # Input form to interact with the LLM
+        with st.form("chat_form", clear_on_submit=True):
+            user_input = st.text_input("Ask me to analyze hidden trends or prescribe actions...")
+            submitted = st.form_submit_button("Send to Copilot 🚀")
+
+        if submitted and user_input:
+            st.session_state.messages.append({"role": "user", "content": user_input})
+            
+            try:
+                # API Call Logic using dynamic key resolution
+                api_key = st.secrets.get("Groq_API", globals().get("Groq_API", locals().get("Groq_API")))
+                
                 if not api_key:
-                    st.error("⚠️ Groq API key not found. Please ensure your 'Groq_API' variable is defined properly.")
+                    st.error("⚠️ Groq API key not found. Ensure 'Groq_API' is defined.")
                 else:
                     client = Groq(api_key=api_key)
                     
-                    # Prepare message payload
                     messages_payload = [{"role": "system", "content": system_context}]
-                    # Append recent messages to maintain context without overloading tokens
+                    # Maintain context for recent messages
                     messages_payload.extend([{"role": m["role"], "content": m["content"]} for m in st.session_state.messages[-5:]])
 
                     with st.spinner("Analyzing deep matrix trends via Groq..."):
                         chat_completion = client.chat.completions.create(
                             messages=messages_payload,
-                            model="llama-3.1-8b-instant", # Updated to a currently supported model
+                            model="llama-3.1-8b-instant", # The currently supported model
                             temperature=0.7,
                             max_tokens=1024,
                         )
                         response = chat_completion.choices[0].message.content
-                        st.markdown(response)
                         st.session_state.messages.append({"role": "assistant", "content": response})
+                        st.rerun() # Refresh to show new messages in the popover
 
             except Exception as e:
                 st.error(f"Groq Integration Error: {str(e)}")
-                st.info("💡 Ensure `groq` is installed (`pip install groq`) and your API key is valid.")
 
 if __name__ == "__main__":
     main()
