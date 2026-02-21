@@ -4,7 +4,7 @@ import plotly.express as px
 import plotly.graph_objects as go
 import numpy as np
 import textwrap
-from groq import Groq  # Import Groq for the AI Chatbot
+from openai import OpenAI  # Replaced Groq with OpenAI for Grok 3 (xAI) integration
 
 # -----------------------------------------------------------------------------
 # 1. PAGE CONFIGURATION & STYLING
@@ -881,8 +881,11 @@ def main():
         # Process the last user message if it needs a response
         if len(st.session_state.chat_messages) > 0 and st.session_state.chat_messages[-1]["role"] == "user":
             try:
-                # Initialize Groq Client
-                client = Groq(api_key=st.secrets["Groq_Offset"])
+                # Initialize OpenAI Client configured for xAI (Grok 3)
+                client = OpenAI(
+                    api_key=st.secrets["Groq_Offset"], 
+                    base_url="https://api.x.ai/v1"
+                )
                 
                 # System Prompt enforcing Indian Language Support
                 system_prompt = """You are Ecopay's AI Assistant, an expert in carbon offsets, sustainability, and climate change in the Indian context. 
@@ -896,7 +899,7 @@ def main():
                 # Fetch Response
                 with st.spinner("AI is typing..."):
                     response = client.chat.completions.create(
-                        model="llama3-70b-8192", # Excellent multilingual support
+                        model="grok-3", # Using Grok 3 Model
                         messages=api_messages,
                         temperature=0.6,
                         max_tokens=400
