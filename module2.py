@@ -3,7 +3,8 @@ import pandas as pd
 import plotly.express as px
 import plotly.graph_objects as go
 import numpy as np
-import textwrap  # Essential for fixing HTML indentation issues
+import textwrap
+from groq import Groq  # Import Groq for the AI Chatbot
 
 # -----------------------------------------------------------------------------
 # 1. PAGE CONFIGURATION & STYLING
@@ -20,42 +21,39 @@ st.markdown("""
 <style>
     /* Global App Styling */
     .stApp {
-        /* Modern Attractive Green Gradient */
         background: linear-gradient(160deg, #02040a 0%, #062c1b 45%, #0d5c3b 100%);
         background-attachment: fixed;
         color: #fafafa;
     }
     
-    /* Heading Adjustments - Make it smaller and one line */
+    /* Heading Adjustments */
     .stApp h1 {
         font-family: 'Inter', sans-serif;
         color: white;
-        font-size: 2.2rem !important; /* Reduced from default to fit one line */
+        font-size: 2.2rem !important; 
         font-weight: 800;
         letter-spacing: -1px;
-        white-space: nowrap; /* Forces text to stay on one line */
+        white-space: nowrap; 
         overflow: hidden;
         text-overflow: ellipsis;
         padding-top: 10px;
     }
     
-    /* FLOATING CART LOGO STYLING
-       Transforming the popover button into a Floating Action Button (FAB)
-       Moved to parallel with the Heading
-    */
-    div[data-testid="stPopover"] {
+    /* =========================================
+       CART POPOVER STYLING (Top Right)
+       ========================================= */
+    div.element-container:has(.cart-marker) + div.element-container div[data-testid="stPopover"] {
         position: fixed !important;
-        top: 55px !important; /* Adjusted to align perfectly with the Header/Title row */
+        top: 55px !important; 
         right: 40px !important;
-        z-index: 999999 !important; /* Topmost layer */
+        z-index: 999999 !important; 
         width: auto !important;
     }
     
-    /* The circular button styling */
-    div[data-testid="stPopover"] > div > button {
+    div.element-container:has(.cart-marker) + div.element-container div[data-testid="stPopover"] > div > button {
         width: 65px !important;
         height: 65px !important;
-        border-radius: 50% !important; /* Make it a perfect circle */
+        border-radius: 50% !important; 
         background: linear-gradient(135deg, #00d26a 0%, #00b359 100%) !important;
         color: white !important;
         border: 2px solid rgba(255,255,255,0.2) !important;
@@ -69,19 +67,59 @@ st.markdown("""
         transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) !important;
     }
     
-    /* Hover effect for the cart logo */
-    div[data-testid="stPopover"] > div > button:hover {
+    div.element-container:has(.cart-marker) + div.element-container div[data-testid="stPopover"] > div > button:hover {
         transform: translateY(-8px) scale(1.1) !important;
         box-shadow: 0 20px 40px rgba(0, 210, 106, 0.8) !important;
         border-color: white !important;
     }
-    
-    /* Ensure text inside button wraps if needed (though we keep it short) */
-    div[data-testid="stPopover"] > div > button > div {
+
+    div.element-container:has(.cart-marker) + div.element-container div[data-testid="stPopover"] > div > button > div {
         display: flex;
         flex-direction: column;
         align-items: center;
         line-height: 1;
+    }
+
+    /* =========================================
+       CHATBOT POPOVER STYLING (Bottom Left)
+       ========================================= */
+    div.element-container:has(.chat-marker) + div.element-container div[data-testid="stPopover"] {
+        position: fixed !important;
+        bottom: 40px !important; 
+        left: 40px !important;
+        z-index: 999999 !important; 
+        width: auto !important;
+    }
+    
+    div.element-container:has(.chat-marker) + div.element-container div[data-testid="stPopover"] > div > button {
+        width: 65px !important;
+        height: 65px !important;
+        border-radius: 50% !important; 
+        background: linear-gradient(135deg, #007bb5 0%, #00a8e8 100%) !important;
+        color: white !important;
+        border: 2px solid rgba(255,255,255,0.2) !important;
+        box-shadow: 0 10px 25px rgba(0, 168, 232, 0.6) !important;
+        padding: 0 !important;
+        font-size: 1.8rem !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) !important;
+    }
+    
+    div.element-container:has(.chat-marker) + div.element-container div[data-testid="stPopover"] > div > button:hover {
+        transform: translateY(-8px) scale(1.1) !important;
+        box-shadow: 0 20px 40px rgba(0, 168, 232, 0.8) !important;
+        border-color: white !important;
+    }
+
+    /* Widen the Chatbot Popover Body */
+    div.element-container:has(.chat-marker) + div.element-container [data-testid="stPopoverBody"] {
+        width: 450px !important;
+        max-width: 90vw !important;
+        border-radius: 16px;
+        border: 1px solid #374151;
+        box-shadow: 0 20px 50px rgba(0,0,0,0.6);
     }
 
     /* Advanced Project Card Container */
@@ -106,7 +144,6 @@ st.markdown("""
         box-shadow: 0 20px 40px rgba(0, 210, 106, 0.15);
     }
 
-    /* Project Image Header */
     .project-image {
         width: 100%;
         height: 180px;
@@ -120,7 +157,6 @@ st.markdown("""
         filter: brightness(1.1);
     }
 
-    /* Card Content Padding */
     .card-content {
         padding: 20px;
         flex-grow: 1;
@@ -128,7 +164,6 @@ st.markdown("""
         flex-direction: column;
     }
 
-    /* Typography Overrides */
     h3.project-title {
         font-family: 'Inter', sans-serif;
         font-weight: 700;
@@ -136,7 +171,7 @@ st.markdown("""
         margin: 0 0 10px 0;
         color: #ffffff;
         line-height: 1.4;
-        min-height: 3.4em; /* Enforce alignment */
+        min-height: 3.4em;
     }
 
     p.project-desc {
@@ -148,11 +183,10 @@ st.markdown("""
         flex-grow: 1;
     }
 
-    /* Metrics */
     div[data-testid="stMetric"] {
         background: rgba(17, 24, 39, 0.7);
         border: 1px solid rgba(0, 168, 232, 0.3);
-        border-left: 4px solid #00a8e8; /* Blue for Marketplace */
+        border-left: 4px solid #00a8e8;
         padding: 15px;
         border-radius: 10px;
     }
@@ -162,7 +196,6 @@ st.markdown("""
         color: white;
     }
 
-    /* Badges & Tags */
     .badge {
         padding: 4px 10px;
         border-radius: 20px;
@@ -193,7 +226,6 @@ st.markdown("""
         border: 1px solid rgba(255,255,255,0.05);
     }
 
-    /* Pricing Section */
     .price-section {
         margin-top: 15px;
         padding-top: 15px;
@@ -203,7 +235,6 @@ st.markdown("""
         align-items: flex-end;
     }
 
-    /* Buttons */
     div.stButton > button:first-child {
         background-color: #00d26a;
         color: white;
@@ -219,7 +250,6 @@ st.markdown("""
         box-shadow: 0 4px 12px rgba(0, 210, 106, 0.4);
     }
 
-    /* Popover/Cart Customization */
     [data-testid="stPopoverBody"] {
         background-color: #0e1117;
         color: white;
@@ -227,7 +257,6 @@ st.markdown("""
         box-shadow: 0 10px 40px rgba(0,0,0,0.5);
     }
     
-    /* Custom Filter Container */
     .filter-container {
         background-color: rgba(255, 255, 255, 0.05);
         padding: 24px;
@@ -237,7 +266,6 @@ st.markdown("""
         box-shadow: inset 0 2px 4px rgba(0,0,0,0.2);
     }
     
-    /* Tab Styling inside Cards */
     .stTabs [data-baseweb="tab-list"] {
         gap: 2px;
         background-color: rgba(255,255,255,0.02);
@@ -273,13 +301,10 @@ def load_user_footprint():
     """
     try:
         df = pd.read_csv("Daily Household Transactions.csv")
-        # Simplified calculation logic matching the Engine
         df['Amount'] = pd.to_numeric(df['Amount'], errors='coerce').fillna(0)
         df = df[df['Income/Expense'] == 'Expense']
         
-        # Quick heuristic for total footprint to seed the marketplace
         total_spend = df['Amount'].sum()
-        # Avg intensity ~0.08 kg/INR based on previous engine
         estimated_carbon_kg = total_spend * 0.08 
         return estimated_carbon_kg
     except:
@@ -574,11 +599,10 @@ PROJECTS = [
 # -----------------------------------------------------------------------------
 
 def calculate_equivalence(kg_co2):
-    """Returns real-world equivalents for a given CO2 mass."""
     return {
-        "trees": kg_co2 / 21,  # Approx absorption per mature tree/year
-        "car_km": kg_co2 / 0.12, # Avg car emits 0.12 kg/km
-        "smartphones": kg_co2 / 0.008 # Charge equivalent
+        "trees": kg_co2 / 21,  
+        "car_km": kg_co2 / 0.12, 
+        "smartphones": kg_co2 / 0.008 
     }
 
 def get_badge_class(ptype):
@@ -589,47 +613,34 @@ def get_badge_class(ptype):
     return "badge-blue"
 
 def get_project_image(ptype, seed=1):
-    """
-    Returns a highly relevant, high-quality image URL based on project type.
-    Using Unsplash source URLs with specific keywords/IDs for reliability.
-    """
-    # Using reliable unsplash source IDs for consistent, high-quality visuals
     if ptype == "Reforestation":
-        return f"https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" # Forest
+        return f"https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" 
     elif ptype == "Renewable Energy":
-        return f"https://images.unsplash.com/photo-1509391366360-2e959784a276?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" # Solar/Wind
+        return f"https://images.unsplash.com/photo-1509391366360-2e959784a276?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" 
     elif ptype == "Methane Capture":
-        return f"https://images.unsplash.com/photo-1518709268805-4e9042af9f23?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" # Industrial
+        return f"https://images.unsplash.com/photo-1518709268805-4e9042af9f23?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" 
     elif ptype == "Community":
-        return f"https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" # Community
-    return f"https://images.unsplash.com/photo-1497436072909-60f360e1d4b0?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" # Nature generic
+        return f"https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" 
+    return f"https://images.unsplash.com/photo-1497436072909-60f360e1d4b0?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" 
 
 # -----------------------------------------------------------------------------
 # 4. MAIN APP LAYOUT
 # -----------------------------------------------------------------------------
 
 def main():
-    # --- TOP NAVIGATION & CART ---
-    # Using a 2-column layout to accommodate the sticky button properly
     col_logo, col_space = st.columns([8, 2])
     
     with col_logo:
         st.title("Ecopay Offset Marketplace")
         st.markdown("##### Global Carbon Registry Access")
-
-    # Cart Logic (Sticky Button is handled via CSS targeting stPopover)
-    # We place the popover logic here, but visually it will float due to CSS
     
-    # Initialize Cart State
     if 'cart' not in st.session_state:
         st.session_state.cart = []
     
     cart_count = len(st.session_state.cart)
     
-    # POPUP CART IMPLEMENTATION
-    # The actual placement in Python code doesn't strictly matter for 'fixed' position CSS, 
-    # but placing it near the top is good practice.
-    # Updated to display a simple Cart Icon with Count inside the button
+    # === CART POPOVER (TOP RIGHT) ===
+    st.markdown('<div class="cart-marker"></div>', unsafe_allow_html=True)
     with st.popover(f"🛒 {cart_count}", help="View your selected offsets"):
         st.markdown("### Your Impact Basket")
         
@@ -664,7 +675,7 @@ def main():
                 st.session_state.cart = []
                 st.success("Offset Certificate Generated! Check your email.")
 
-    # --- TOP FILTERS (Previously Sidebar) ---
+    # --- TOP FILTERS ---
     with st.container():
         st.markdown("""<div class="filter-container">""", unsafe_allow_html=True)
         f_col1, f_col2 = st.columns([2, 1])
@@ -677,14 +688,11 @@ def main():
             )
         
         with f_col2:
-            # Determine max price dynamically based on data, but keeping slider usable
             max_price_limit = 2000
             max_price = st.slider("💰 Max Price (₹/tonne)", 0, max_price_limit, 2000)
         st.markdown("</div>", unsafe_allow_html=True)
 
     # --- Main Content ---
-    
-    # 1. CONTEXT METRICS
     st.markdown("### Close the Loop: Neutralize Your Residual Footprint")
     st.markdown("Invest in verified, high-impact climate projects to balance out emissions that cannot be reduced through behavioral change.")
     
@@ -699,11 +707,9 @@ def main():
     with col_stat2:
         st.metric("Offset Status", f"{offsets_in_cart:,.0f} kg", delta=f"{offsets_in_cart/current_footprint*100:.1f}% Neutralized")
     with col_stat3:
-        # Dynamic Equivalence Logic
         eq = calculate_equivalence(net_gap)
         st.metric("Net Zero Gap", f"{net_gap:,.0f} kg", delta="Remaining to Offset", delta_color="inverse")
         
-    # Visual Equivalence Bar
     st.markdown(textwrap.dedent(f"""
     <div style="background: rgba(255,255,255,0.05); padding: 15px; border-radius: 10px; margin-top: 10px; display: flex; justify-content: space-around; align-items: center; flex-wrap: wrap;">
     <span style="font-size: 1.1rem; margin: 5px;">⚠️ <b>{net_gap:,.0f} kg</b> Gap is equivalent to:</span>
@@ -717,7 +723,6 @@ def main():
     # 2. GLOBAL PROJECT MAP
     st.subheader("🌏 Global Project Tracker")
     
-    # Filter projects based on sidebar/top inputs
     filtered_projects = [p for p in PROJECTS if p['type'] in selected_types and p['price_per_tonne'] <= max_price]
     
     if filtered_projects:
@@ -753,19 +758,14 @@ def main():
     st.subheader("🌿 Featured Projects")
     st.markdown(f"Showing {len(filtered_projects)} verified projects available for immediate funding.")
 
-    # Grid Layout for Projects
-    # We use a 2-column layout. 
     cols = st.columns(2)
     
     for idx, project in enumerate(filtered_projects):
         col = cols[idx % 2]
         with col:
-            # Card Container
             badge_cls = get_badge_class(project['type'])
             img_url = get_project_image(project['type'], seed=project['id'])
             
-            # Using textwrap.dedent to strip common leading whitespace from every line of the string.
-            # This prevents markdown from interpreting the HTML as a code block.
             card_html = textwrap.dedent(f"""
             <div class="project-card-container">
             <img src="{img_url}" class="project-image" alt="{project['name']}">
@@ -799,22 +799,19 @@ def main():
             """)
             st.markdown(card_html, unsafe_allow_html=True)
             
-            # Interactive Options (Visible by default - Expander removed)
-            # Adding a wrapper container to group these controls
             with st.container():
-                st.markdown('<div style="margin-top: 10px;"></div>', unsafe_allow_html=True) # Spacer
+                st.markdown('<div style="margin-top: 10px;"></div>', unsafe_allow_html=True) 
                 
                 tabs = st.tabs(["Purchase", "Validation", "Impact"])
                 
                 with tabs[0]:
-                    # Interactive Offset Slider for this specific project
                     c1, c2 = st.columns([2, 1])
                     with c1:
                         offset_amount = st.slider(f"Amount (kg)", 0, 2000, 100, key=f"slider_{project['id']}", label_visibility="collapsed")
                         cost = offset_amount * (project['price_per_tonne'] / 1000)
                         st.caption(f"Offset: **{offset_amount} kg** | Cost: **₹{cost:.0f}**")
                     with c2:
-                        st.write("") # Spacer
+                        st.write("") 
                         if st.button(f"Add 🛒", key=f"btn_{project['id']}"):
                             st.session_state.cart.append({
                                 "name": project['name'],
@@ -836,7 +833,6 @@ def main():
             
             st.markdown("---")
 
-
     # 4. EDUCATIONAL FOOTER
     st.markdown("---")
     st.subheader("📚 Verified Carbon Standard (VCS) Explained")
@@ -852,6 +848,66 @@ def main():
 
     # Extra space for scrolling at the bottom
     st.markdown("<br>" * 5, unsafe_allow_html=True)
+
+    # =========================================================================
+    # 5. FLOATING AI CHATBOT IMPLEMENTATION (BOTTOM LEFT)
+    # =========================================================================
+    
+    # Initialize Chat Messages
+    if "chat_messages" not in st.session_state:
+        st.session_state.chat_messages = [
+            {"role": "assistant", "content": "Namaste! 🙏 I am Ecopay AI. I can speak English, Hindi, Bengali, Tamil, Telugu, and all other Indian languages. How can I assist you with carbon offsets today?"}
+        ]
+
+    st.markdown('<div class="chat-marker"></div>', unsafe_allow_html=True)
+    with st.popover("💬", help="Chat with Ecopay AI"):
+        st.markdown("### Ecopay Sustainability Assistant")
+        st.caption("Powered by Groq ✨")
+        
+        # Chat container
+        chat_container = st.container(height=400)
+        with chat_container:
+            for msg in st.session_state.chat_messages:
+                if msg["role"] != "system":
+                    st.chat_message(msg["role"]).write(msg["content"])
+        
+        # Chat input box
+        if prompt := st.chat_input("Ask about projects or sustainability..."):
+            
+            # Display user message instantly
+            st.session_state.chat_messages.append({"role": "user", "content": prompt})
+            st.rerun() # Trigger rerun to show user message before fetching from API
+
+        # Process the last user message if it needs a response
+        if len(st.session_state.chat_messages) > 0 and st.session_state.chat_messages[-1]["role"] == "user":
+            try:
+                # Initialize Groq Client
+                client = Groq(api_key=st.secrets["Groq_Offset"])
+                
+                # System Prompt enforcing Indian Language Support
+                system_prompt = """You are Ecopay's AI Assistant, an expert in carbon offsets, sustainability, and climate change in the Indian context. 
+                CRITICAL INSTRUCTION: You must detect the language the user is speaking and reply fluently in THAT SAME LANGUAGE. You support all Indian languages including Hindi, Bengali, Tamil, Telugu, Marathi, Gujarati, Kannada, Malayalam, Odia, Punjabi, as well as English.
+                Keep your responses polite, encouraging, concise, and helpful."""
+                
+                api_messages = [{"role": "system", "content": system_prompt}] + [
+                    {"role": m["role"], "content": m["content"]} for m in st.session_state.chat_messages
+                ]
+                
+                # Fetch Response
+                with st.spinner("AI is typing..."):
+                    response = client.chat.completions.create(
+                        model="llama3-70b-8192", # Excellent multilingual support
+                        messages=api_messages,
+                        temperature=0.6,
+                        max_tokens=400
+                    )
+                
+                bot_reply = response.choices[0].message.content
+                st.session_state.chat_messages.append({"role": "assistant", "content": bot_reply})
+                st.rerun()
+                
+            except Exception as e:
+                st.error(f"Error connecting to AI: {e}")
 
 if __name__ == "__main__":
     main()
